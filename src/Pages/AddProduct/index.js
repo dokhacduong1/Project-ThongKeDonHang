@@ -58,6 +58,7 @@ function AddProducts() {
         try {
           await setDoc(newDocRef, objectNew);
           form.resetFields();
+          setPriceProducts(1300);
           messageApi.open({
               type: "success",
               content: `Thêm Thành Công ${infoForm.nameProducts}`,
