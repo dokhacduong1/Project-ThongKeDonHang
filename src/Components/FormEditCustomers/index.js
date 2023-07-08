@@ -111,7 +111,7 @@ function FormEditCustomers(props) {
                                             <Switch onChange={handeleChangeSwitch} checkedChildren="Shoppe" unCheckedChildren="Khác" defaultChecked={record.typeCustomers} />
                                         </Form.Item>
                                         {
-                                            !checkSwitch && (<>
+                                            !checkSwitch ? (<>
                                                 <Form.Item
                                                     name="phoneCustomers"
                                                     label="Số Điện Thoại"
@@ -127,7 +127,25 @@ function FormEditCustomers(props) {
                                                         className="addCategory__form-input"
                                                     />
                                                 </Form.Item>
-                                            </>)
+                                            </>) :
+                                             (<>
+                                                 <Form.Item
+                                                     name="linkCustomers"
+                                                     label="Link Shoppe"
+                                                     rules={[
+                                                         {
+                                                             required: true,
+                                                             message: "Vui Lòng Nhập Link Khách Hàng!",
+                                                         },
+                                                     ]}
+                 
+                                                 >
+                                                     <Input
+                                                         placeholder="Link Shoppe Khách Hàng"
+                                                         className="addCategory__form-input"
+                                                     />
+                                                 </Form.Item>
+                                             </>)
                                         }
                                         <Form.Item>
                                             <Button
