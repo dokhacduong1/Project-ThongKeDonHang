@@ -7,6 +7,7 @@ import { useState } from "react";
 import { checkPhoneNumber } from "../../Helpers/phone";
 function AddCustomers() {
     const customerCollectionRef = collection(db, "customer");
+    const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const [checkSwitch, setCheckWitch] = useState(true);
     const handleFinish = async (infoForm) => {
@@ -19,6 +20,7 @@ function AddCustomers() {
         };
         try {
             await setDoc(newDocRef, objectNew);
+            form.resetFields();
             messageApi.open({
                 type: "success",
                 content: `Thêm Thành Công ${infoForm.nameCustomers}`,
@@ -41,6 +43,7 @@ function AddCustomers() {
             {contextHolder}
             <Card className="addCustomers">
                 <Form 
+                    form={form}
                     onFinish={handleFinish}
                     initialValues={tempObject}
                 >

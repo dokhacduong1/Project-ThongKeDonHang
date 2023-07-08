@@ -6,7 +6,7 @@ import { auth, db } from "../../Config/Firebase";
 function AddCategory() {
     const categorysCollectionRef = collection(db, "categorys");
     const [messageApi, contextHolder] = message.useMessage();
-    
+    const [form] = Form.useForm();
     const handleFinish = async (infoForm) => {
         const newDocRef = doc(categorysCollectionRef);
         const objectNew = {
@@ -16,6 +16,7 @@ function AddCategory() {
         };
         try {
             await setDoc(newDocRef, objectNew);
+            form.resetFields();
             messageApi.open({
                 type: "success",
                 content: `Thêm Thành Công ${infoForm.nameCategory}`,
@@ -31,7 +32,8 @@ function AddCategory() {
         <>
             {contextHolder}
             <Card className="addCategory">
-                <Form onFinish={handleFinish}>
+                <Form onFinish={handleFinish}
+                 form={form}>
                     <Form.Item
                         name="nameCategory"
                         label="Tên Danh Mục"

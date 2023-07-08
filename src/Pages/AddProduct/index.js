@@ -19,6 +19,7 @@ function AddProducts() {
   const [optionsSelectSourceShop, setOptionsSelectSourceShop] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
   const { TextArea } = Input;
+
   useEffect(() => {
     const fetchApi = async () => {
       
@@ -56,6 +57,7 @@ function AddProducts() {
         };
         try {
           await setDoc(newDocRef, objectNew);
+          form.resetFields();
           messageApi.open({
               type: "success",
               content: `Thêm Thành Công ${infoForm.nameProducts}`,

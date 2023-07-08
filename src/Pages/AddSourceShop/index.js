@@ -5,7 +5,7 @@ import "./AddSourceShop.scss"
 function AddSourceShop() {
     const sourceShopCollectionRef = collection(db, "sourceShop");
     const [messageApi, contextHolder] = message.useMessage();
-
+    const [form] = Form.useForm();
     const handleFinish = async (infoForm) => {
         const newDocRef = doc(sourceShopCollectionRef);
         const objectNew = {
@@ -15,6 +15,7 @@ function AddSourceShop() {
         };
         try {
             await setDoc(newDocRef, objectNew);
+            form.resetFields();
             messageApi.open({
                 type: "success",
                 content: `Thêm Thành Công ${infoForm.nameShop}`,
@@ -30,7 +31,8 @@ function AddSourceShop() {
         <>
             {contextHolder}
             <Card className="addSourceShop">
-                <Form onFinish={handleFinish}>
+                <Form onFinish={handleFinish}
+                 form={form}>
                     <Form.Item
                         name="nameShop"
                         label="Tên Shop Nguồn"

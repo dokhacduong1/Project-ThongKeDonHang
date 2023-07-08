@@ -10,6 +10,7 @@ function AddOders() {
     const [optionsSelectCustomers, setOptionsSelectCustomers] = useState([]);
     const [optionsSelectProducts, setOptionsSelectProducts] = useState([]);
     const [products, setProdcuts] = useState([]);
+    const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const fetchApi = async () => {
         const responseCustomers = await getDocs(customerCollectionRef);
@@ -66,6 +67,7 @@ function AddOders() {
           
             try {
                 await updateDoc(customerDoc, customerFullDocData)
+                form.resetFields();
                 messageApi.open({
                     type: "success",
                     content: `Thêm Thành Công Đơn Hàng`,
@@ -85,6 +87,7 @@ function AddOders() {
             customerFullDocData?.oderProducts[checkIndex].oders.push(objectNew)
             try {
                 await updateDoc(customerDoc, customerFullDocData)
+                form.resetFields();
                 messageApi.open({
                     type: "success",
                     content: `Thêm Thành Công Đơn Hàng`,
@@ -102,7 +105,9 @@ function AddOders() {
         <>
          {contextHolder}
             <Card className="addOder">
-                <Form onFinish={handleFinish}>
+                <Form onFinish={handleFinish}
+                 form={form}
+                >
                     <Form.Item
                         name="idCustomers"
                         label="Tên Khách Hàng"
