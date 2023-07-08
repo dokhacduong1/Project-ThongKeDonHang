@@ -99,7 +99,7 @@ function CustomersManagement() {
         <>
           {record.typeCustomers ? (
             <a
-              href={`https://shopee.vn/${record.nameCustomers}`}
+              href={record.linkCustomers}
               target="blank"
             >
               <img

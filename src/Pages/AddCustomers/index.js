@@ -8,7 +8,7 @@ import { checkPhoneNumber } from "../../Helpers/phone";
 function AddCustomers() {
     const customerCollectionRef = collection(db, "customer");
     const [messageApi, contextHolder] = message.useMessage();
-    const [checkSwitch, setCheckWitch] = useState(false);
+    const [checkSwitch, setCheckWitch] = useState(true);
     const handleFinish = async (infoForm) => {
         const newDocRef = doc(customerCollectionRef);
         const objectNew = {
@@ -31,13 +31,19 @@ function AddCustomers() {
         }
     };
     const handeleChangeSwitch = async (valueChange) => {
-       setCheckWitch(valueChange)
+        setCheckWitch(valueChange)
+    }
+    const tempObject = {
+        typeCustomers:true
     }
     return (
         <>
             {contextHolder}
             <Card className="addCustomers">
-                <Form onFinish={handleFinish}>
+                <Form 
+                    onFinish={handleFinish}
+                    initialValues={tempObject}
+                >
                     <Form.Item
                         name="nameCustomers"
                         label="Tên Khách Hàng"
@@ -63,39 +69,58 @@ function AddCustomers() {
                             },
                         ]}
                     >
-                        <Switch onChange={handeleChangeSwitch} checkedChildren="Shoppe" unCheckedChildren="Khác" />
+                        <Switch defaultChecked ={checkSwitch}  onChange={handeleChangeSwitch} checkedChildren="Shoppe" unCheckedChildren="Khác" />
                     </Form.Item>
 
                     {
-                        !checkSwitch && (<>
+                        !checkSwitch ? (<>
                             <Form.Item
                                 name="phoneCustomers"
                                 label="Số Điện Thoại"
                                 rules={[
                                     {
+                                        required: true,
                                         validator: checkPhoneNumber,
                                     },
                                 ]}
-                            
+
                             >
                                 <Input
                                     placeholder="Số Điện Thoại Khách Hàng"
                                     className="addCategory__form-input"
                                 />
-                                 </Form.Item>
+                            </Form.Item>
+                        </>) :
+                            (<>
+                                <Form.Item
+                                    name="linkCustomers"
+                                    label="Link Shoppe"
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui Lòng Nhập Link Khách Hàng!",
+                                        },
+                                    ]}
+
+                                >
+                                    <Input
+                                        placeholder="Link Shoppe Khách Hàng"
+                                        className="addCategory__form-input"
+                                    />
+                                </Form.Item>
                             </>)
                     }
 
-                            <Form.Item>
-                                <Button
-                                    type="primary"
-                                    htmlType="submit"
-                                    className="login__form-button"
-                                >
-                                    Thêm Khách Hàng
-                                </Button>
-                            </Form.Item>
-                        </Form>
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            className="login__form-button"
+                        >
+                            Thêm Khách Hàng
+                        </Button>
+                    </Form.Item>
+                </Form>
             </Card>
         </>
     );
