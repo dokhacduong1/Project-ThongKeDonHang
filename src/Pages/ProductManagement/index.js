@@ -53,6 +53,7 @@ function ProductManagement() {
             dataMap.nameCategorys = checkLinkCategorys[0].nameCategory;
             dataMap.nameShop = checkLinkSourceShop[0].nameShop;
         });
+       
         setTempDataSource(dataDocAllProducts);
         setDataSource(dataDocAllProducts);
     };
@@ -68,7 +69,7 @@ function ProductManagement() {
     };
     //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
     const handleForm = async (valueForm) => {
-        if (valueForm.select !== "all" && valueForm.select !== "expiredProduct") {
+        if (valueForm.select !== "all" && valueForm.select !== "expiredProduct" && valueForm.select !== "quantitySold") {
             //Hàm này convert hai cái về chữ thường xong check
             const dataDocAllProducts = tempDataSource.filter(
                 (dataFilter) => dataFilter[valueForm.select].toLowerCase().includes((valueForm.keyword).toLowerCase()) 
@@ -81,7 +82,8 @@ function ProductManagement() {
                     new Date(dataFilter.cycleProducts) < new Date(getDataTime())
             );
             setDataSource(dataDocAllProducts);
-        } else {
+        } 
+        else {
             setDataSource(tempDataSource)
         }
     };
@@ -89,7 +91,7 @@ function ProductManagement() {
         {
             value: "nameProducts",
             label: "Tên Sản Phẩm",
-        },
+        },  
         {
             value: "nameCategorys",
             label: "Tên Danh Mục",

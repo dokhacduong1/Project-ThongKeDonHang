@@ -281,6 +281,20 @@ function FormEditProducts(props) {
                                                 parser={(value) => value.replace("%", "")}
                                             />
                                         </Form.Item>
+                                        <Form.Item
+                                            name="quantitySold"
+                                            label="Số Lượn Bán"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui Lòng Nhập % Thuế Bán Sản Phẩm!",
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber
+                                    
+                                            />
+                                        </Form.Item>
 
                                         <Form.Item
                                             name="descriptionProducts"

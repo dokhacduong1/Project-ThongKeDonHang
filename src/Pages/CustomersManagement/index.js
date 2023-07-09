@@ -10,6 +10,9 @@ import {
   Badge,
   Tag,
   Popover,
+  Row,
+  Col,
+  Statistic,
 } from "antd";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -18,7 +21,8 @@ import {
   DeleteOutlined,
   SearchOutlined,
   ReloadOutlined,
-  ShopOutlined,
+  ArrowUpOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import "./CustomersManagement.scss";
 import logo1 from "./image/1.png";
@@ -98,10 +102,7 @@ function CustomersManagement() {
       render: (_, record) => (
         <>
           {record.typeCustomers ? (
-            <a
-              href={record.linkCustomers}
-              target="blank"
-            >
+            <a href={record.linkCustomers} target="blank">
               <img
                 className="customersManagement__image"
                 src={logo1}
@@ -225,24 +226,36 @@ function CustomersManagement() {
             <ReloadOutlined /> Reset
           </Button>
         </Form>
-        <div className="customersManagement__tag">
-          <Tag color="rgb(16, 82, 136)">
-            <span>
-              Tổng Số Khách Hàng:{" "}
-              <strong style={{ color: "rgb(240 220 163)" }}>
-                {dataSource.length}
-              </strong>
-            </span>
-          </Tag>
-          <Tag color="rgb(16, 82, 136)">
-            <span>
-              Tổng Tiền Lời Là:{" "}
-              <strong style={{ color: "rgb(240 220 163)" }}>
-                {sumPriceProfit}
-              </strong>
-            </span>
-          </Tag>
-        </div>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Card bordered={false} style={{textAlign:"center"}}>
+              <Statistic
+                title="Số Khách Hàng"
+                value={dataSource.length}
+               
+                valueStyle={{
+                  color: "rgb(16, 82, 136)",
+                }}
+                prefix={<UserOutlined />}
+               
+              />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card bordered={false} style={{textAlign:"center"}}>
+              <Statistic
+                title="Tổng Tiền Lời"
+                value={sumPriceProfit}
+              
+                valueStyle={{
+                  color: "rgb(16, 82, 136)",
+                }}
+               
+                prefix={<ArrowUpOutlined />}
+              />
+            </Card>
+          </Col>
+        </Row>
         <Table rowKey="id" dataSource={dataSource} columns={columns} />;
       </Card>
     </>

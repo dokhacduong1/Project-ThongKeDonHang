@@ -47,7 +47,9 @@ function AddOders() {
     }, [])
     const handleFinish = async (valueForm) => {
         const getProductId = products.filter(dataFilter => dataFilter.id === valueForm.idProducts)[0];
+    
         const customerDoc = doc(db, "customer", valueForm.idCustomers);
+       
         const customerDocGet = await getDoc(customerDoc);
         const customerFullDocData = customerDocGet.data();
         const checkIndex = customerFullDocData?.oderProducts.findIndex(dataMap => dataMap.date === valueForm.dateCompletedOder);
@@ -67,6 +69,7 @@ function AddOders() {
           
             try {
                 await updateDoc(customerDoc, customerFullDocData)
+              
                 form.resetFields();
                 messageApi.open({
                     type: "success",
@@ -87,6 +90,7 @@ function AddOders() {
             customerFullDocData?.oderProducts[checkIndex].oders.push(objectNew)
             try {
                 await updateDoc(customerDoc, customerFullDocData)
+               
                 form.resetFields();
                 messageApi.open({
                     type: "success",
@@ -99,7 +103,7 @@ function AddOders() {
                 });
             }
         }
-      
+        
     }
     return (
         <>

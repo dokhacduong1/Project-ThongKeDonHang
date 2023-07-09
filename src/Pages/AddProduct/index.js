@@ -53,6 +53,7 @@ function AddProducts() {
             id: newDocRef.id,
             priceProducts:priceProducts,
             creatAtProduct:getDataTime(),
+         
             profitProduct:infoForm.initialPriceProducts*percentageToDecimal(revenuePercentageProducts)
         };
         try {
