@@ -73,14 +73,16 @@ function AddProducts() {
   };
   const valueInit = {
     revenuePercentageProducts: 20,
-    taxProducts: 10,
+    taxProducts: 15,
     initialPriceProducts: 1000,
-    descriptionProducts:`Quý khách có thắc mắc khác về sản phẩm ib trực tiếp mình để hỗ trợ thêm ạ
+    descriptionProducts:`Khách nhớ áp mã giảm của shop ->Trợ Ship cho Đơn <50K 
+    Quý khách có thắc mắc khác về sản phẩm ib trực tiếp mình để hỗ trợ thêm ạ
     👉🏼Bên mình có hỗ trợ gói quà theo yêu cầu tặng người thân thương 
     👉🏼 Hỗ trợ mua sỉ, giảm giá mua số lượng nhiều 
     👉🏼Liên hệ shop mình qua: 
     Hotline /Zalo: 0945191056
-    Facebook (Fanpage):  Đói Meo Shop
+    Facebook (Fanpage):  Đói Meo Shop 
+    👉🏼Mã hàng: 
     `
   };
 
