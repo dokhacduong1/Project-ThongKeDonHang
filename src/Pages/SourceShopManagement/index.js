@@ -46,12 +46,6 @@ function SourceShopManagement(){
       }
       const columns = [
         {
-          title: 'Id',
-          dataIndex: 'id',
-          key: 'id',
-          align:'center'
-        },
-        {
           title: 'Tên Shop Nguồn',
           dataIndex: 'nameShop',
           key: 'nameShop',

@@ -128,7 +128,7 @@ function AddProducts() {
               showSearch
               placeholder="Vui Lòng Chọn Shop"
               optionFilterProp="children"
-              filterOption={(input, option) => (option?.label ?? '').includes(input)}
+              filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
               filterSort={(optionA, optionB) =>
                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
               }
@@ -150,7 +150,7 @@ function AddProducts() {
               showSearch
               placeholder="Vui Lòng Chọn Danh Mục"
               optionFilterProp="children"
-              filterOption={(input, option) => (option?.label ?? '').includes(input)}
+              filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
               filterSort={(optionA, optionB) =>
                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
               }

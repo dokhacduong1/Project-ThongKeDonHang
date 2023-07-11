@@ -126,13 +126,9 @@ function AddOders() {
                             showSearch
                             placeholder="Vui Lòng Chọn Khách Hàng"
                             optionFilterProp="children"
-                            filterOption={(input, option) =>
-                                (option?.label ?? "").includes(input)
-                            }
+                            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                             filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? "")
-                                    .toLowerCase()
-                                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                              (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
                             options={optionsSelectCustomers}
                         />
@@ -151,13 +147,9 @@ function AddOders() {
                             showSearch
                             placeholder="Vui Lòng Chọn Sản Phẩm"
                             optionFilterProp="children"
-                            filterOption={(input, option) =>
-                                (option?.label ?? "").includes(input)
-                            }
+                            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                             filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? "")
-                                    .toLowerCase()
-                                    .localeCompare((optionB?.label ?? "").toLowerCase())
+                              (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
                             options={optionsSelectProducts}
                         />

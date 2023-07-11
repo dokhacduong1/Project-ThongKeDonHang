@@ -53,12 +53,6 @@ function CategoryManagement() {
   ];
   const columns = [
     {
-      title: "Id",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-    },
-    {
       title: "Tên Danh Mục",
       dataIndex: "nameCategory",
       key: "nameCategory",

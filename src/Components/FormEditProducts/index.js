@@ -8,7 +8,7 @@ import { validateDate } from "../../Helpers/dataTime";
 import { percentageToDecimal } from "../../Helpers/convertNumber";
 function FormEditProducts(props) {
     const { record, fetchApiLoad } = props;
-   
+
     const categorysCollectionRef = collection(db, "categorys");
     const sourceShopCollectionRef = collection(db, "sourceShop");
     const [optionsSelectCategorys, setOptionsSelectCategorys] = useState([]);
@@ -25,7 +25,7 @@ function FormEditProducts(props) {
         const responseSourceShop = await getDocs(sourceShopCollectionRef);
         const dataDocAllCategorys = responseCateogys.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data())
         const dataDocAllSourceShop = responseSourceShop.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data())
-        
+
         const optionsConvertCategorys = dataDocAllCategorys.map(dataMap => {
             return {
                 value: dataMap.id,
@@ -47,26 +47,26 @@ function FormEditProducts(props) {
     const onChangeInitialPriceProducts = (value) => {
 
         const totalPrice = value +
-          value * percentageToDecimal(taxProducts) +
-          value * percentageToDecimal(revenuePercentageProducts);
+            value * percentageToDecimal(taxProducts) +
+            value * percentageToDecimal(revenuePercentageProducts);
         setInitialPriceProducts(value)
         setPriceProducts(totalPrice);
-      };
-      const onChangeRevenuePercentageProducts = (value) => {
-    
+    };
+    const onChangeRevenuePercentageProducts = (value) => {
+
         const totalPrice = initialPriceProducts +
-          initialPriceProducts * percentageToDecimal(taxProducts) +
-          initialPriceProducts * percentageToDecimal(value);
+            initialPriceProducts * percentageToDecimal(taxProducts) +
+            initialPriceProducts * percentageToDecimal(value);
         setRevenuePercentageProducts(value);
         setPriceProducts(totalPrice);
-      };
-      const onChangeTaxProducts = (value) => {
+    };
+    const onChangeTaxProducts = (value) => {
         const totalPrice = initialPriceProducts +
-          initialPriceProducts * percentageToDecimal(value) +
-          initialPriceProducts * percentageToDecimal(revenuePercentageProducts);
+            initialPriceProducts * percentageToDecimal(value) +
+            initialPriceProducts * percentageToDecimal(revenuePercentageProducts);
         setTaxProducts(value);
         setPriceProducts(totalPrice);
-      };
+    };
 
 
 
@@ -127,7 +127,7 @@ function FormEditProducts(props) {
                 footer={null}
             >
                 <Card className="editProducts">
-                   
+
                     <Row gutter={20}>
                         <Col className="editProducts__form" span={24}>
                             {record && (
@@ -142,7 +142,7 @@ function FormEditProducts(props) {
                                         onFinish={handleStudents}
                                         initialValues={record}
                                     >
-                                         <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${priceProducts} vnđ`}></Input>
+                                        <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${priceProducts} vnđ`}></Input>
                                         <Form.Item
                                             name="idSourceShop"
                                             label="Tên Shop Nguồn"
@@ -157,9 +157,9 @@ function FormEditProducts(props) {
                                                 showSearch
                                                 placeholder="Vui Lòng Chọn Shop"
                                                 optionFilterProp="children"
-                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                                 filterSort={(optionA, optionB) =>
-                                                  (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
 
                                                 options={optionsSelectSourceShop}
@@ -181,7 +181,7 @@ function FormEditProducts(props) {
                                                 showSearch
                                                 placeholder="Vui Lòng Chọn Danh Mục"
                                                 optionFilterProp="children"
-                                                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                                                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                                 filterSort={(optionA, optionB) =>
                                                   (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
@@ -281,7 +281,7 @@ function FormEditProducts(props) {
                                                 parser={(value) => value.replace("%", "")}
                                             />
                                         </Form.Item>
-                                       
+
 
                                         <Form.Item
                                             name="descriptionProducts"
