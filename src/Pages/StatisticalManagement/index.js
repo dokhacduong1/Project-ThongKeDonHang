@@ -123,7 +123,7 @@ function StatisticalManagement() {
                 }}
                 onFinish={handleForm}
             >
-                <Form.Item
+                <Form.Item  className="search__welcome-item"
                     name="month"
                     rules={[
                         {
@@ -132,14 +132,14 @@ function StatisticalManagement() {
                         },
                     ]}
                 >
-                    <Select
+                    <Select 
                         options={optionsSelectMonth}
                         style={{ width: 170 }}
                         placeholder="Tìm Kiếm"
                         className="search__welcome-form-select"
                     />
                 </Form.Item>
-                <Form.Item name="year">
+                <Form.Item name="year"  className="search__welcome-item">
                     <Select
                         options={optionsSelectYear}
                         style={{ width: 170 }}
@@ -148,7 +148,7 @@ function StatisticalManagement() {
                     />
                 </Form.Item>
 
-                <Form.Item>
+                <Form.Item  className="search__welcome-item">
                     <Button
                         className="search__welcome-form-button"
                         type="primary"
@@ -158,8 +158,8 @@ function StatisticalManagement() {
                     </Button>
                 </Form.Item>
             </Form>
-            <Row gutter={16}>
-                <Col span={24}>
+            <Row >
+                <Col span={24} xs={24}>
                     <Card bordered={false} style={{ textAlign: "center" }}>
                         <Statistic
                             title={(<>Tổng Tiền Lời {text}</>)}

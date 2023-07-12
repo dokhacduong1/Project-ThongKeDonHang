@@ -18,11 +18,12 @@ function LogoutAndAdmin() {
   
     return (
         <>
-            <div className="header__account-button" style={{display:"flex"}}>
-                
+            <div className="header__account-button" >      
                 <Button className="header__account-button-p" onClick={handleLogout}>Logout</Button>
             </div>
-
+            <div className="header__account-bar" >      
+                <span onClick={handleLogout}>Logout</span>
+            </div>
         </>
     )
 }

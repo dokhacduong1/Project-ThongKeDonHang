@@ -11,11 +11,16 @@ import {
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../Config/Firebase";
-import { DeleteOutlined, EyeOutlined, SearchOutlined,ReloadOutlined } from "@ant-design/icons";
+import {
+    DeleteOutlined,
+    EyeOutlined,
+    SearchOutlined,
+    ReloadOutlined,
+} from "@ant-design/icons";
 
 import { getDataTime } from "../../Helpers/dataTime";
 import { Link } from "react-router-dom";
-import "../Search/Search.scss"
+import "../Search/Search.scss";
 import FormEditProducts from "../../Components/FormEditProducts";
 function ProductManagement() {
     const productsCollectionRef = collection(db, "products");
@@ -53,7 +58,7 @@ function ProductManagement() {
             dataMap.nameCategorys = checkLinkCategorys[0].nameCategory;
             dataMap.nameShop = checkLinkSourceShop[0].nameShop;
         });
-       
+
         setTempDataSource(dataDocAllProducts);
         setDataSource(dataDocAllProducts);
     };
@@ -69,12 +74,18 @@ function ProductManagement() {
     };
     //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
     const handleForm = async (valueForm) => {
-        if (valueForm.select !== "all" && valueForm.select !== "expiredProduct" && valueForm.select !== "quantitySold") {
+        if (
+            valueForm.select !== "all" &&
+            valueForm.select !== "expiredProduct" &&
+            valueForm.select !== "quantitySold"
+        ) {
             //Hàm này convert hai cái về chữ thường xong check
-            const dataDocAllProducts = tempDataSource.filter(
-                (dataFilter) => dataFilter[valueForm.select].toLowerCase().includes((valueForm.keyword).toLowerCase()) 
+            const dataDocAllProducts = tempDataSource.filter((dataFilter) =>
+                dataFilter[valueForm.select]
+                    .toLowerCase()
+                    .includes(valueForm.keyword.toLowerCase())
             );
-           
+
             setDataSource(dataDocAllProducts);
         } else if (valueForm.select === "expiredProduct") {
             const dataDocAllProducts = tempDataSource.filter(
@@ -82,16 +93,15 @@ function ProductManagement() {
                     new Date(dataFilter.cycleProducts) < new Date(getDataTime())
             );
             setDataSource(dataDocAllProducts);
-        } 
-        else {
-            setDataSource(tempDataSource)
+        } else {
+            setDataSource(tempDataSource);
         }
     };
     const optionsSelect = [
         {
             value: "nameProducts",
             label: "Tên Sản Phẩm",
-        },  
+        },
         {
             value: "nameCategorys",
             label: "Tên Danh Mục",
@@ -208,7 +218,8 @@ function ProductManagement() {
     return (
         <>
             <Card>
-                <Form style={{ textAlign: "center" }}
+                <Form
+                    style={{ textAlign: "center" }}
                     className="search__welcome-form"
                     layout="inline"
                     rules={{
@@ -217,6 +228,7 @@ function ProductManagement() {
                     onFinish={handleForm}
                 >
                     <Form.Item
+                        className="search__welcome-item"
                         name="select"
                         rules={[
                             {
@@ -232,7 +244,7 @@ function ProductManagement() {
                             className="search__welcome-form-select"
                         />
                     </Form.Item>
-                    <Form.Item name="keyword">
+                    <Form.Item name="keyword" className="search__welcome-item">
                         <Input
                             style={{ width: 230 }}
                             className="search__welcome-form-input"
@@ -240,7 +252,7 @@ function ProductManagement() {
                         />
                     </Form.Item>
 
-                    <Form.Item>
+                    <Form.Item className="search__welcome-item">
                         <Button
                             className="search__welcome-form-button"
                             type="primary"
@@ -252,12 +264,22 @@ function ProductManagement() {
                     <Button
                         className="search__welcome-form-button"
                         type="primary"
-                        onClick={()=>{handleForm({select: 'all'})}}
+                        onClick={() => {
+                            handleForm({ select: "all" });
+                        }}
                     >
                         <ReloadOutlined /> Reset
                     </Button>
                 </Form>
-                <Table rowKey="id" dataSource={dataSource} columns={columns} />;
+                <Table
+                    rowKey="id"
+                    dataSource={dataSource}
+                    columns={columns}
+                    scroll={{
+                        x: 300,
+                    }}
+                />
+                ;
             </Card>
         </>
     );

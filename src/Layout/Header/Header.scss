@@ -60,10 +60,18 @@
       display: block;
     }
     &__account{
-      display: none;
+      display: none !important;
     }
     &__menu{
       display: none;
+    }
+    &__logo{
+      &-img{
+        width: 80px;
+      }
+      &-nav{
+        display: none;
+      }
     }
   }
 }

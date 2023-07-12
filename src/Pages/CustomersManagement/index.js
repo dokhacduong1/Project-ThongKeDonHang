@@ -184,6 +184,7 @@ function CustomersManagement() {
           onFinish={handleForm}
         >
           <Form.Item
+          className="search__welcome-item"
             name="select"
             rules={[
               {
@@ -199,7 +200,7 @@ function CustomersManagement() {
               className="search__welcome-form-select"
             />
           </Form.Item>
-          <Form.Item name="keyword">
+          <Form.Item name="keyword" className="search__welcome-item">
             <Input
               style={{ width: 230 }}
               className="search__welcome-form-input"
@@ -207,7 +208,7 @@ function CustomersManagement() {
             />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item className="search__welcome-item">
             <Button
               className="search__welcome-form-button"
               type="primary"
@@ -227,7 +228,7 @@ function CustomersManagement() {
           </Button>
         </Form>
         <Row gutter={16}>
-          <Col span={12}>
+          <Col lg={12} md = {12} xs={24}>
             <Card bordered={false} style={{textAlign:"center"}}>
               <Statistic
                 title="Số Khách Hàng"
@@ -241,7 +242,7 @@ function CustomersManagement() {
               />
             </Card>
           </Col>
-          <Col span={12}>
+          <Col lg={12} md = {12} xs={24}>
             <Card bordered={false} style={{textAlign:"center"}}>
               <Statistic
                 title="Tổng Tiền Lời"
@@ -256,7 +257,9 @@ function CustomersManagement() {
             </Card>
           </Col>
         </Row>
-        <Table rowKey="id" dataSource={dataSource} columns={columns} />;
+        <Table rowKey="id" dataSource={dataSource} columns={columns} scroll={{
+                        x: 300,
+                    }}/>;
       </Card>
     </>
   );

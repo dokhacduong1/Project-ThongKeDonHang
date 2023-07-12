@@ -17,5 +17,20 @@
                 }
             }
         }
+        &-bar{
+            display: none;
+        }
+    }
+}
+@media (max-width: 992.9px){
+    .header{
+        &__account{
+            &-button{
+                display: none;
+            }
+            &-bar{
+                display: block;
+            }
+        }
     }
 }

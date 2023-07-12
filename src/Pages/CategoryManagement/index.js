@@ -114,6 +114,7 @@ function CategoryManagement() {
           onFinish={handleForm}
         >
           <Form.Item
+            className="search__welcome-item"
             name="select"
             rules={[
               {
@@ -129,7 +130,7 @@ function CategoryManagement() {
               className="search__welcome-form-select"
             />
           </Form.Item>
-          <Form.Item name="keyword">
+          <Form.Item name="keyword"  className="search__welcome-item">
             <Input
               style={{ width: 230 }}
               className="search__welcome-form-input"
@@ -137,7 +138,7 @@ function CategoryManagement() {
             />
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item  className="search__welcome-item">
             <Button
               className="search__welcome-form-button"
               type="primary"

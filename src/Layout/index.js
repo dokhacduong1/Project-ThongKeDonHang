@@ -4,7 +4,7 @@ import { Outlet  } from "react-router-dom";
 import Header from "./Header";
 import FooterMain from "./Footer";
 import Sider from "antd/es/layout/Sider";
-
+import "./Layout.scss"
 import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";

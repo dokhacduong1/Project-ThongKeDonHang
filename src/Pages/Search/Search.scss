@@ -63,3 +63,12 @@
    
   }
   
+  @media (max-width: 992.9px){
+    .search{
+      &__welcome{
+        &-item{
+          padding: 5px 0px;
+        }
+      }
+  }
+}
