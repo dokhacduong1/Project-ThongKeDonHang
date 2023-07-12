@@ -279,7 +279,6 @@ function ProductManagement() {
                         x: 300,
                     }}
                 />
-                ;
             </Card>
         </>
     );
