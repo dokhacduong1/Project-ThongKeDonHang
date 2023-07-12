@@ -73,7 +73,7 @@ function AddProducts() {
   };
   const valueInit = {
     revenuePercentageProducts: 20,
-    taxProducts: 15,
+    taxProducts: 17,
     initialPriceProducts: 1000,
     descriptionProducts:`Khách nhớ áp mã giảm của shop ->Trợ Ship cho Đơn <50K 
     Quý khách có thắc mắc khác về sản phẩm ib trực tiếp mình để hỗ trợ thêm ạ

@@ -2,17 +2,17 @@ import { Line } from "@ant-design/plots";
 import { collection, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../Config/Firebase";
-import { sumArrayDate, sumArrayDate2 } from "../../Helpers/dataTime";
+import { sumArrayDate } from "../../Helpers/dataTime";
 import { Button, Card, Col, Empty, Form, Input, Row, Select, Statistic } from "antd";
 import { SearchOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import { GetApiShoppe } from "../../services/shoppeApi";
+
 function StatisticalManagement() {
     const customerCollectionRef = collection(db, "customer");
     const [data, setData] = useState([]);
     const [tempData, setTempData] = useState([]);
     const [text, setText] = useState("Tất Cả Các Tháng")
     const fetchApi = async () => {
-        
+       
         const responseCustomer = await getDocs(customerCollectionRef);
         const dataDocAllCustomer = responseCustomer.docs
             .filter(
@@ -20,7 +20,6 @@ function StatisticalManagement() {
             )
             .map((dataMap) => dataMap.data());
         const convertDateAll = sumArrayDate(dataDocAllCustomer);
-        const sortedDate = convertDateAll.sort((a, b) => new Date(a.year) - new Date(b.year));
         setData(convertDateAll);
         setTempData(convertDateAll)
     };

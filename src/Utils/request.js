@@ -1,4 +1,4 @@
-const API_DOMAIN = "http://localhost:4000/";
+const API_DOMAIN = "https://json-server-scrap-shoppe.vercel.app/";
 
 export const Get = async (path, options) => {
   const response = await fetch(API_DOMAIN + path, options);
@@ -38,3 +38,4 @@ export const Patch = async (path, options) => {
   const result = await response.json();
   return result;
 };
+

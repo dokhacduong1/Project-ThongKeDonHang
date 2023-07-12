@@ -1,0 +1,15 @@
+.ctatisticShoppe{
+    &__imageShoppe{
+        width: 300px;
+    }
+    &__image{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &__col{
+        p{
+            text-align: center;
+        }
+    }
+}
