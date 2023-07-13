@@ -83,7 +83,7 @@ function FormEditProducts(props) {
         const objectNew = {
             ...valueForm,
             priceProducts:Math.round(priceProducts),
-            profitProduct:0.15*valueForm.initialPriceProducts
+            profitProduct:0.15*Math.round(priceProducts)
         }
        
         try {

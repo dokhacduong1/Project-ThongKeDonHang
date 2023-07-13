@@ -25,12 +25,9 @@ function StatisticShoppe() {
         dataDocAllProducts.map(async (dataMap)=>{
             const productsDoc = doc(db, "products", dataMap.id);
             const objectNew = {
-                initialPriceProducts:dataMap.initialPriceProducts,
-                revenuePercentageProducts:5000,
-                taxProducts:5000,
-                priceProducts:Math.round((dataMap.initialPriceProducts+5000+5000)/0.75),
-                profitProduct:Math.round(dataMap.initialPriceProducts*0.15)
+                profitProduct:Math.round(dataMap.priceProducts*0.15)
             }
+            console.log(objectNew)
             try {
                 // await updateDoc(productsDoc, objectNew);
                 console.log("ok")

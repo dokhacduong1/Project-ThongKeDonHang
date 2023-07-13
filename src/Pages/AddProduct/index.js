@@ -56,7 +56,7 @@ function AddProducts() {
             id: newDocRef.id,
             priceProducts:Math.round(priceProducts),
             creatAtProduct:getDataTime(),
-            profitProduct:0.15*infoForm.initialPriceProducts
+            profitProduct:0.15*Math.round(priceProducts)
         };
         try {
           await setDoc(newDocRef, objectNew);
