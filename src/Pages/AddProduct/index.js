@@ -13,8 +13,8 @@ function AddProducts() {
   const [form] = Form.useForm();
   const [priceProducts, setPriceProducts] = useState(1300); //idProducts nameProducts priceProducts initialPriceProducts revenuePercentageProducts taxProducts
   const [initialPriceProducts, setInitialPriceProducts] = useState(1000);
-  const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(20);
-  const [taxProducts, setTaxProducts] = useState(10);
+  const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(5000);
+  const [taxProducts, setTaxProducts] = useState(5000);
   const [optionsSelectCategorys, setOptionsSelectCategorys] = useState([]);
   const [optionsSelectSourceShop, setOptionsSelectSourceShop] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
@@ -51,7 +51,7 @@ function AddProducts() {
             ...infoForm,
             uidUser: auth?.currentUser?.uid,
             id: newDocRef.id,
-            priceProducts:priceProducts,
+            priceProducts:Math.round(priceProducts),
             creatAtProduct:getDataTime(),
          
             profitProduct:infoForm.initialPriceProducts*percentageToDecimal(revenuePercentageProducts)
@@ -72,8 +72,8 @@ function AddProducts() {
       }
   };
   const valueInit = {
-    revenuePercentageProducts: 20,
-    taxProducts: 17,
+    revenuePercentageProducts: 5000,
+    taxProducts: 5000,
     initialPriceProducts: 1000,
     descriptionProducts:`Khách nhớ áp mã giảm của shop ->Trợ Ship cho Đơn <50K 
     Quý khách có thắc mắc khác về sản phẩm ib trực tiếp mình để hỗ trợ thêm ạ
@@ -89,24 +89,18 @@ function AddProducts() {
 
   const onChangeInitialPriceProducts = (value) => {
 
-    const totalPrice = value +
-      value * percentageToDecimal(taxProducts) +
-      value * percentageToDecimal(revenuePercentageProducts);
+    const totalPrice = (value+taxProducts+revenuePercentageProducts)/0.75;
     setInitialPriceProducts(value)
     setPriceProducts(totalPrice);
   };
   const onChangeRevenuePercentageProducts = (value) => {
 
-    const totalPrice = initialPriceProducts +
-      initialPriceProducts * percentageToDecimal(taxProducts) +
-      initialPriceProducts * percentageToDecimal(value);
+    const totalPrice = (initialPriceProducts +taxProducts+value)/0.75;
     setRevenuePercentageProducts(value);
     setPriceProducts(totalPrice);
   };
   const onChangeTaxProducts = (value) => {
-    const totalPrice = initialPriceProducts +
-      initialPriceProducts * percentageToDecimal(value) +
-      initialPriceProducts * percentageToDecimal(revenuePercentageProducts);
+    const totalPrice = (initialPriceProducts +value +revenuePercentageProducts)/0.75;
     setTaxProducts(value);
     setPriceProducts(totalPrice);
   };
@@ -114,7 +108,7 @@ function AddProducts() {
     <>
      {contextHolder}
       <Card className="productManagement">
-        <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${priceProducts} vnđ`}></Input>
+        <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${Math.round(priceProducts).toLocaleString()} vnđ`}></Input>
         <Form form={form} initialValues={valueInit} onFinish={handleFinish}>
           <Form.Item
             name="idSourceShop"
@@ -218,7 +212,7 @@ function AddProducts() {
           </Form.Item>
           <Form.Item
             name="revenuePercentageProducts"
-            label="Phần Trăm Lời"
+            label="Voucher"
             rules={[
               {
                 required: true,
@@ -228,15 +222,17 @@ function AddProducts() {
           >
             <InputNumber
               onChange={onChangeRevenuePercentageProducts}
-              min={0}
-              max={100}
-              formatter={(value) => `${value}%`}
-              parser={(value) => value.replace("%", "")}
+              formatter={(value) =>
+                `${value.toLocaleString()}`.replace(
+                  /\B(?=(\d{3})+(?!\d))/g,
+                  ","
+                )
+              }
             />
           </Form.Item>
           <Form.Item
             name="taxProducts"
-            label="Phần Trăm Thuế"
+            label="Đóng Gói"
             rules={[
               {
                 required: true,
@@ -246,10 +242,12 @@ function AddProducts() {
           >
             <InputNumber
               onChange={onChangeTaxProducts}
-              min={0}
-              max={100}
-              formatter={(value) => `${value}%`}
-              parser={(value) => value.replace("%", "")}
+              formatter={(value) =>
+                `${value.toLocaleString()}`.replace(
+                  /\B(?=(\d{3})+(?!\d))/g,
+                  ","
+                )
+              }
             />
           </Form.Item>
 

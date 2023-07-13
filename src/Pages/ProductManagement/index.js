@@ -138,12 +138,18 @@ function ProductManagement() {
             title: "Giá Gốc Sản Phẩm",
             dataIndex: "initialPriceProducts",
             key: "initialPriceProducts",
+            render:(_,record)=>(
+                <>{Math.round(record.initialPriceProducts).toLocaleString()}</>
+            ),
             align: "center",
         },
         {
             title: "Giá Bán Sản Phẩm",
             dataIndex: "priceProducts",
             key: "priceProducts",
+            render:(_,record)=>(
+                <>{Math.round(record.priceProducts).toLocaleString()}</>
+            ),
             align: "center",
         },
         {
