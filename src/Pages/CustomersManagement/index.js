@@ -93,6 +93,9 @@ function CustomersManagement() {
       title: "Tổng Tiền Lời 1 Khách Hàng",
       dataIndex: "sumProfit",
       key: "sumProfit",
+      render:(_,record)=>(
+        <>{Math.round(record.sumProfit)}</>
+      ),
       align: "center",
     },
     {

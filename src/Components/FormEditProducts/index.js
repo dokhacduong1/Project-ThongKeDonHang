@@ -6,6 +6,7 @@ import { db, auth } from "../../Config/Firebase";
 import TextArea from "antd/es/input/TextArea";
 import { validateDate } from "../../Helpers/dataTime";
 import { percentageToDecimal } from "../../Helpers/convertNumber";
+import { priceOutProduct } from "../../Helpers/products";
 function FormEditProducts(props) {
     const { record, fetchApiLoad } = props;
 
@@ -17,8 +18,8 @@ function FormEditProducts(props) {
     const [initialPriceProducts, setInitialPriceProducts] = useState(record.initialPriceProducts);
     const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(record.revenuePercentageProducts);
     const [taxProducts, setTaxProducts] = useState(record.taxProducts);
+    const [okProfitProducts, setOkProfitProducts] = useState(record?.okProfitProducts);
 
-  
     const [isModal, setIsModalOpen] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const [form] = Form.useForm();
@@ -47,23 +48,29 @@ function FormEditProducts(props) {
         fetchApi();
     }, [])
     const onChangeInitialPriceProducts = (value) => {
-
-        const totalPrice = (value+taxProducts+revenuePercentageProducts)/0.75;
+        const totalPrice = priceOutProduct(okProfitProducts, taxProducts, revenuePercentageProducts, value);
         setInitialPriceProducts(value)
         setPriceProducts(totalPrice);
-      };
-      const onChangeRevenuePercentageProducts = (value) => {
-    
-        const totalPrice = (initialPriceProducts +taxProducts+value)/0.75;
+    };
+    const onChangeRevenuePercentageProducts = (value) => {
+        const totalPrice = priceOutProduct(okProfitProducts, taxProducts, value, initialPriceProducts);
         setRevenuePercentageProducts(value);
         setPriceProducts(totalPrice);
-      };
-      const onChangeTaxProducts = (value) => {
-        const totalPrice = (initialPriceProducts +value +revenuePercentageProducts)/0.75;
+    };
+    const onChangeTaxProducts = (value) => {
+        const totalPrice = priceOutProduct(okProfitProducts, value, revenuePercentageProducts, initialPriceProducts);
+
         setTaxProducts(value);
         setPriceProducts(totalPrice);
-      };
+    };
+    const onChangeOkProfitProducts = (value) => {
 
+        const totalPrice = priceOutProduct(value, taxProducts, revenuePercentageProducts, initialPriceProducts);
+        setOkProfitProducts(value);
+        setPriceProducts(totalPrice);
+
+
+    };
 
 
 
@@ -82,10 +89,10 @@ function FormEditProducts(props) {
         const categoryDoc = doc(db, "products", record.id);
         const objectNew = {
             ...valueForm,
-            priceProducts:Math.round(priceProducts),
-            profitProduct:0.15*Math.round(priceProducts)
+            priceProducts: Math.round(priceProducts),
+            profitProduct: percentageToDecimal(okProfitProducts) * Math.round(priceProducts)
         }
-       
+
         try {
             await updateDoc(categoryDoc, objectNew);
             fetchApiLoad();
@@ -185,7 +192,7 @@ function FormEditProducts(props) {
                                                 optionFilterProp="children"
                                                 filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                                                 filterSort={(optionA, optionB) =>
-                                                  (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                                    (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                                                 }
 
                                                 options={optionsSelectCategorys}
@@ -261,10 +268,10 @@ function FormEditProducts(props) {
                                                 onChange={onChangeRevenuePercentageProducts}
                                                 formatter={(value) =>
                                                     `${value.toLocaleString()}`.replace(
-                                                      /\B(?=(\d{3})+(?!\d))/g,
-                                                      ","
+                                                        /\B(?=(\d{3})+(?!\d))/g,
+                                                        ","
                                                     )
-                                                  }
+                                                }
                                             />
                                         </Form.Item>
                                         <Form.Item
@@ -281,13 +288,30 @@ function FormEditProducts(props) {
                                                 onChange={onChangeTaxProducts}
                                                 formatter={(value) =>
                                                     `${value.toLocaleString()}`.replace(
-                                                      /\B(?=(\d{3})+(?!\d))/g,
-                                                      ","
+                                                        /\B(?=(\d{3})+(?!\d))/g,
+                                                        ","
                                                     )
-                                                  }
+                                                }
                                             />
                                         </Form.Item>
-
+                                        <Form.Item
+                                            name="okProfitProducts"
+                                            label="Tiền Lời Mong Muốn"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui Lòng Nhập Tiền Lời!",
+                                                },
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                onChange={onChangeOkProfitProducts}
+                                                min={0}
+                                                max={99}
+                                                formatter={(value) => `${value}%`}
+                                                parser={(value) => value.replace("%", "")}
+                                            />
+                                        </Form.Item>
 
                                         <Form.Item
                                             name="descriptionProducts"

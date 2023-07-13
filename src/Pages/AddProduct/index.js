@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import { auth, db } from "../../Config/Firebase";
 import { getDataTime, validateDate } from "../../Helpers/dataTime";
+import { priceOutProduct } from "../../Helpers/products";
 function AddProducts() {
   const categorysCollectionRef = collection(db, "categorys");
   const productsCollectionRef = collection(db, "products");
@@ -13,10 +14,11 @@ function AddProducts() {
   const [form] = Form.useForm();
   const [priceProducts, setPriceProducts] = useState(1300); //idProducts nameProducts priceProducts initialPriceProducts revenuePercentageProducts taxProducts
   const [initialPriceProducts, setInitialPriceProducts] = useState(1000);
-
+  const [okProfitProducts, setOkProfitProducts] = useState(15);
   //Hai thằng này thực ra là voucher và đóng gói lỡ up lên database lên ta vẫn để nguyên tên như này
   const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(5000);
   const [taxProducts, setTaxProducts] = useState(5000);
+
   
   const [optionsSelectCategorys, setOptionsSelectCategorys] = useState([]);
   const [optionsSelectSourceShop, setOptionsSelectSourceShop] = useState([]);
@@ -25,7 +27,7 @@ function AddProducts() {
 
   useEffect(() => {
     const fetchApi = async () => {
-      
+
       const responseCateogys = await getDocs(categorysCollectionRef);
       const responseSourceShop = await getDocs(sourceShopCollectionRef);
       const dataDocAllCategorys = responseCateogys.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data())
@@ -42,7 +44,7 @@ function AddProducts() {
           label: dataMap.nameShop
         }
       });
-     
+
       setOptionsSelectCategorys(optionsConvertCategorys);
       setOptionsSelectSourceShop(optionsConvertSourceShop);
     }
@@ -50,34 +52,36 @@ function AddProducts() {
   }, [])
   const handleFinish = async (infoForm) => {
     const newDocRef = doc(productsCollectionRef);
-        const objectNew = {
-            ...infoForm,
-            uidUser: auth?.currentUser?.uid,
-            id: newDocRef.id,
-            priceProducts:Math.round(priceProducts),
-            creatAtProduct:getDataTime(),
-            profitProduct:0.15*Math.round(priceProducts)
-        };
-        try {
-          await setDoc(newDocRef, objectNew);
-          form.resetFields();
-          setPriceProducts(1300);
-          messageApi.open({
-              type: "success",
-              content: `Thêm Thành Công ${infoForm.nameProducts}`,
-          });
-      } catch {
-          messageApi.open({
-              type: "error",
-              content: `Vui Lòng Thêm Lại`,
-          });
-      }
+    const objectNew = {
+      ...infoForm,
+      uidUser: auth?.currentUser?.uid,
+      id: newDocRef.id,
+      priceProducts: Math.round(priceProducts),
+      creatAtProduct: getDataTime(),
+      profitProduct: percentageToDecimal(okProfitProducts) * Math.round(priceProducts)
+    };
+ 
+    try {
+      await setDoc(newDocRef, objectNew);
+      form.resetFields();
+      setPriceProducts(1300);
+      messageApi.open({
+        type: "success",
+        content: `Thêm Thành Công ${infoForm.nameProducts}`,
+      });
+    } catch {
+      messageApi.open({
+        type: "error",
+        content: `Vui Lòng Thêm Lại`,
+      });
+    }
   };
   const valueInit = {
     revenuePercentageProducts: 5000,
     taxProducts: 5000,
     initialPriceProducts: 1000,
-    descriptionProducts:`Khách nhớ áp mã giảm của shop ->Trợ Ship cho Đơn <50K 
+    okProfitProducts:15,
+    descriptionProducts: `Khách nhớ áp mã giảm của shop ->Trợ Ship cho Đơn <50K 
     Quý khách có thắc mắc khác về sản phẩm ib trực tiếp mình để hỗ trợ thêm ạ
     👉🏼Bên mình có hỗ trợ gói quà theo yêu cầu tặng người thân thương 
     👉🏼 Hỗ trợ mua sỉ, giảm giá mua số lượng nhiều 
@@ -90,25 +94,32 @@ function AddProducts() {
 
 
   const onChangeInitialPriceProducts = (value) => {
-
-    const totalPrice = (value+taxProducts+revenuePercentageProducts)/0.75;
+    const totalPrice = priceOutProduct(okProfitProducts,taxProducts,revenuePercentageProducts,value);
     setInitialPriceProducts(value)
     setPriceProducts(totalPrice);
   };
   const onChangeRevenuePercentageProducts = (value) => {
-
-    const totalPrice = (initialPriceProducts +taxProducts+value)/0.75;
+    const totalPrice = priceOutProduct(okProfitProducts,taxProducts,value,initialPriceProducts);
     setRevenuePercentageProducts(value);
     setPriceProducts(totalPrice);
   };
   const onChangeTaxProducts = (value) => {
-    const totalPrice = (initialPriceProducts +value +revenuePercentageProducts)/0.75;
+    const totalPrice = priceOutProduct(okProfitProducts,value,revenuePercentageProducts,initialPriceProducts);
+  
     setTaxProducts(value);
     setPriceProducts(totalPrice);
   };
+  const onChangeOkProfitProducts = (value) => {
+  
+      const totalPrice = priceOutProduct(value,taxProducts,revenuePercentageProducts,initialPriceProducts);
+      setOkProfitProducts(value);
+      setPriceProducts(totalPrice);
+  
+   
+  };
   return (
     <>
-     {contextHolder}
+      {contextHolder}
       <Card className="productManagement">
         <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${Math.round(priceProducts).toLocaleString()} vnđ`}></Input>
         <Form form={form} initialValues={valueInit} onFinish={handleFinish}>
@@ -122,7 +133,7 @@ function AddProducts() {
               },
             ]}
           >
-           <Select
+            <Select
               showSearch
               placeholder="Vui Lòng Chọn Shop"
               optionFilterProp="children"
@@ -130,7 +141,7 @@ function AddProducts() {
               filterSort={(optionA, optionB) =>
                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
               }
-            
+
               options={optionsSelectSourceShop}
             />
           </Form.Item>
@@ -152,7 +163,7 @@ function AddProducts() {
               filterSort={(optionA, optionB) =>
                 (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
               }
-             
+
               options={optionsSelectCategorys}
             />
           </Form.Item>
@@ -252,7 +263,24 @@ function AddProducts() {
               }
             />
           </Form.Item>
-
+          <Form.Item
+            name="okProfitProducts"
+            label="Tiền Lời Mong Muốn"
+            rules={[
+              {
+                required: true,
+                message: "Vui Lòng Nhập Tiền Lời!",
+              },
+            ]}
+          >
+            <InputNumber
+              onChange={onChangeOkProfitProducts}
+              min={0}
+              max={99}
+              formatter={(value) => `${value}%`}
+              parser={(value) => value.replace("%", "")}
+            />
+          </Form.Item>
           <Form.Item
             name="descriptionProducts"
             label="Mô Tả Sản Phẩm"
@@ -263,7 +291,7 @@ function AddProducts() {
               },
             ]}
           >
-             <TextArea rows={4} />
+            <TextArea rows={4} />
           </Form.Item>
           <Form.Item>
             <Button
