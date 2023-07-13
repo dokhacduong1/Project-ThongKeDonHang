@@ -1,21 +1,44 @@
 import { useEffect, useState } from "react";
 import { getDataShoppe } from "../../services/shoppeApi";
 import { Card, Col, Row } from "antd";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
+import { db, auth } from "../../Config/Firebase";
 import "./StatisticalShoppe.scss"
 function StatisticShoppe() {
     const [dataShoppe, setDataShoppe] = useState([]);
+    const productsCollectionRef = collection(db, "products");
     const fetchApi = async () => {
-        const responeShoppe = await getDataShoppe();
-        //self trong đây nó sẽ là biến lưu cái mảng ra mảng tên selsf rồi chạy so sánh vs cái item id console.log(sẽ thấy nó sẽ là một mảng tempResponeShoppe chạy liên tục so sánh với item)
-        //đây là check trong mảng có phần tử trùng nhau ta lấy itemId để check
-        const uniqueObjects = responeShoppe.filter((item, index, self) => {
-            return index === self.findIndex((t) => (
-              t.itemid === item.itemid
-            ));
-          });
+        // const responeShoppe = await getDataShoppe();
+        // //self trong đây nó sẽ là biến lưu cái mảng ra mảng tên selsf rồi chạy so sánh vs cái item id console.log(sẽ thấy nó sẽ là một mảng tempResponeShoppe chạy liên tục so sánh với item)
+        // //đây là check trong mảng có phần tử trùng nhau ta lấy itemId để check
+        // const uniqueObjects = responeShoppe.filter((item, index, self) => {
+        //     return index === self.findIndex((t) => (
+        //       t.itemid === item.itemid
+        //     ));
+        //   });
        
-        uniqueObjects.sort((a, b) => b.sold -a.sold);
-        setDataShoppe(uniqueObjects)
+        // uniqueObjects.sort((a, b) => b.sold -a.sold);
+        // setDataShoppe(uniqueObjects)
+
+        const responseProducts = await getDocs(productsCollectionRef);
+        const dataDocAllProducts = responseProducts.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data())
+        dataDocAllProducts.map(async (dataMap)=>{
+            const productsDoc = doc(db, "products", dataMap.id);
+            const objectNew = {
+                initialPriceProducts:dataMap.initialPriceProducts,
+                revenuePercentageProducts:5000,
+                taxProducts:5000,
+                priceProducts:Math.round((dataMap.initialPriceProducts+5000+5000)/0.75),
+                profitProduct:Math.round(dataMap.initialPriceProducts*0.15)
+            }
+            try {
+                // await updateDoc(productsDoc, objectNew);
+                console.log("ok")
+            }
+            catch{
+
+            }
+        })
     }
     useEffect(() => {
 
@@ -24,7 +47,7 @@ function StatisticShoppe() {
     console.log(dataShoppe)
     return (
         <>
-            {
+            {/* {
                 dataShoppe && (<>
                     <Card className="ctatisticShoppe">
                         <Row className="ctatisticShoppe__row" gutter={[15, 15]}>
@@ -48,7 +71,7 @@ function StatisticShoppe() {
                         </Row>
                     </Card>
                 </>)
-            }
+            } */}
 
         </>
     )

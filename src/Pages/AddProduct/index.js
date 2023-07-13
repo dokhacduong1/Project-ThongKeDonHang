@@ -13,8 +13,11 @@ function AddProducts() {
   const [form] = Form.useForm();
   const [priceProducts, setPriceProducts] = useState(1300); //idProducts nameProducts priceProducts initialPriceProducts revenuePercentageProducts taxProducts
   const [initialPriceProducts, setInitialPriceProducts] = useState(1000);
+
+  //Hai thằng này thực ra là voucher và đóng gói lỡ up lên database lên ta vẫn để nguyên tên như này
   const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(5000);
   const [taxProducts, setTaxProducts] = useState(5000);
+  
   const [optionsSelectCategorys, setOptionsSelectCategorys] = useState([]);
   const [optionsSelectSourceShop, setOptionsSelectSourceShop] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
@@ -53,8 +56,7 @@ function AddProducts() {
             id: newDocRef.id,
             priceProducts:Math.round(priceProducts),
             creatAtProduct:getDataTime(),
-         
-            profitProduct:infoForm.initialPriceProducts*percentageToDecimal(revenuePercentageProducts)
+            profitProduct:0.15*infoForm.initialPriceProducts
         };
         try {
           await setDoc(newDocRef, objectNew);
@@ -216,7 +218,7 @@ function AddProducts() {
             rules={[
               {
                 required: true,
-                message: "Vui Lòng Nhập % Lời Bán Sản Phẩm!",
+                message: "Vui Lòng Nhập Tiền Voucher!",
               },
             ]}
           >
@@ -236,7 +238,7 @@ function AddProducts() {
             rules={[
               {
                 required: true,
-                message: "Vui Lòng Nhập % Thuế Bán Sản Phẩm!",
+                message: "Vui Lòng Nhập Tiền Đóng Gói!",
               },
             ]}
           >

@@ -17,6 +17,8 @@ function FormEditProducts(props) {
     const [initialPriceProducts, setInitialPriceProducts] = useState(record.initialPriceProducts);
     const [revenuePercentageProducts, setRevenuePercentageProducts] = useState(record.revenuePercentageProducts);
     const [taxProducts, setTaxProducts] = useState(record.taxProducts);
+
+  
     const [isModal, setIsModalOpen] = useState(false);
     const [api, contextHolder] = notification.useNotification();
     const [form] = Form.useForm();
@@ -46,27 +48,21 @@ function FormEditProducts(props) {
     }, [])
     const onChangeInitialPriceProducts = (value) => {
 
-        const totalPrice = value +
-            value * percentageToDecimal(taxProducts) +
-            value * percentageToDecimal(revenuePercentageProducts);
+        const totalPrice = (value+taxProducts+revenuePercentageProducts)/0.75;
         setInitialPriceProducts(value)
         setPriceProducts(totalPrice);
-    };
-    const onChangeRevenuePercentageProducts = (value) => {
-
-        const totalPrice = initialPriceProducts +
-            initialPriceProducts * percentageToDecimal(taxProducts) +
-            initialPriceProducts * percentageToDecimal(value);
+      };
+      const onChangeRevenuePercentageProducts = (value) => {
+    
+        const totalPrice = (initialPriceProducts +taxProducts+value)/0.75;
         setRevenuePercentageProducts(value);
         setPriceProducts(totalPrice);
-    };
-    const onChangeTaxProducts = (value) => {
-        const totalPrice = initialPriceProducts +
-            initialPriceProducts * percentageToDecimal(value) +
-            initialPriceProducts * percentageToDecimal(revenuePercentageProducts);
+      };
+      const onChangeTaxProducts = (value) => {
+        const totalPrice = (initialPriceProducts +value +revenuePercentageProducts)/0.75;
         setTaxProducts(value);
         setPriceProducts(totalPrice);
-    };
+      };
 
 
 
@@ -84,8 +80,14 @@ function FormEditProducts(props) {
     };
     const handleStudents = async (valueForm) => {
         const categoryDoc = doc(db, "products", record.id);
+        const objectNew = {
+            ...valueForm,
+            priceProducts:Math.round(priceProducts),
+            profitProduct:0.15*valueForm.initialPriceProducts
+        }
+       
         try {
-            await updateDoc(categoryDoc, valueForm);
+            await updateDoc(categoryDoc, objectNew);
             fetchApiLoad();
             setIsModalOpen(false);
             api.success({
@@ -142,7 +144,7 @@ function FormEditProducts(props) {
                                         onFinish={handleStudents}
                                         initialValues={record}
                                     >
-                                        <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${priceProducts} vnđ`}></Input>
+                                        <Input style={{ textAlign: "center", marginBottom: "20px", color: "white", backgroundColor: "rgb(16, 82, 136)" }} disabled={true} value={`Giá Bán Là: ${Math.round(priceProducts).toLocaleString()} vnđ`}></Input>
                                         <Form.Item
                                             name="idSourceShop"
                                             label="Tên Shop Nguồn"
@@ -247,38 +249,42 @@ function FormEditProducts(props) {
                                         </Form.Item>
                                         <Form.Item
                                             name="revenuePercentageProducts"
-                                            label="Phần Trăm Lời"
+                                            label="Voucher"
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: "Vui Lòng Nhập % Lời Bán Sản Phẩm!",
+                                                    message: "Vui Lòng Nhập Tiền Voucher!",
                                                 },
                                             ]}
                                         >
                                             <InputNumber
                                                 onChange={onChangeRevenuePercentageProducts}
-                                                min={0}
-                                                max={100}
-                                                formatter={(value) => `${value}%`}
-                                                parser={(value) => value.replace("%", "")}
+                                                formatter={(value) =>
+                                                    `${value.toLocaleString()}`.replace(
+                                                      /\B(?=(\d{3})+(?!\d))/g,
+                                                      ","
+                                                    )
+                                                  }
                                             />
                                         </Form.Item>
                                         <Form.Item
                                             name="taxProducts"
-                                            label="Phần Trăm Thuế"
+                                            label="Đóng Gói"
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: "Vui Lòng Nhập % Thuế Bán Sản Phẩm!",
+                                                    message: "Vui Lòng Nhập Tiền Đóng Gói!",
                                                 },
                                             ]}
                                         >
                                             <InputNumber
                                                 onChange={onChangeTaxProducts}
-                                                min={0}
-                                                max={100}
-                                                formatter={(value) => `${value}%`}
-                                                parser={(value) => value.replace("%", "")}
+                                                formatter={(value) =>
+                                                    `${value.toLocaleString()}`.replace(
+                                                      /\B(?=(\d{3})+(?!\d))/g,
+                                                      ","
+                                                    )
+                                                  }
                                             />
                                         </Form.Item>
 
