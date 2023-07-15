@@ -58,7 +58,8 @@ function AddProducts() {
       id: newDocRef.id,
       priceProducts: Math.round(priceProducts),
       creatAtProduct: getDataTime(),
-      profitProduct: percentageToDecimal(okProfitProducts) * Math.round(priceProducts)
+      profitProduct: percentageToDecimal(okProfitProducts) * Math.round(priceProducts),
+      profitProduct2: Math.round(priceProducts) - infoForm.initialPriceProducts
     };
  
     try {

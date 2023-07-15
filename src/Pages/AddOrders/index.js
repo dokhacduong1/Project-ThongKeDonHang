@@ -1,4 +1,4 @@
-import { Button, Card, Form, Input, InputNumber, Select, message } from "antd";
+import { Button, Card, Form, Input, InputNumber, Select, Switch, message } from "antd";
 import { arrayUnion, collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { auth, db } from "../../Config/Firebase";
 import { useEffect, useState } from "react";
@@ -12,6 +12,9 @@ function AddOders() {
     const [products, setProdcuts] = useState([]);
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
+    const initialValues = {
+        typePrices:false
+    }
     const fetchApi = async () => {
         const responseCustomers = await getDocs(customerCollectionRef);
         const responseProducts = await getDocs(productsCollectionRef);
@@ -47,19 +50,20 @@ function AddOders() {
     }, [])
     const handleFinish = async (valueForm) => {
         const getProductId = products.filter(dataFilter => dataFilter.id === valueForm.idProducts)[0];
-    
+       
         const customerDoc = doc(db, "customer", valueForm.idCustomers);
        
         const customerDocGet = await getDoc(customerDoc);
         const customerFullDocData = customerDocGet.data();
         const checkIndex = customerFullDocData?.oderProducts.findIndex(dataMap => dataMap.date === valueForm.dateCompletedOder);
         //Ở đây có hai trường hợp nếu check dc cái ngày đã hoàn thành chưa tồn tại thì phải tạo ra nó thêm data vào còn khi check được rồi ta lấy cái checkIndex kia là vị chí của mảng r thao tác ddataa trong mảng thôi
+        const profitAll = valueForm.typePrices ? getProductId?.profitProduct : getProductId?.profitProduct2
         if (checkIndex === -1) {
             const objectNew = {
                 date: valueForm?.dateCompletedOder,
                 oders: [
                     {
-                        profit: getProductId?.profitProduct * valueForm.count,
+                        profit: profitAll * valueForm.count,
                         nameProducts: getProductId?.nameProducts,
                         idProducts: getProductId?.id
                     }
@@ -82,8 +86,9 @@ function AddOders() {
                 });
             }
         } else {
+            
             const objectNew = {
-                profit: getProductId?.profitProduct * valueForm.count,
+                profit: profitAll * valueForm.count,
                 nameProducts: getProductId?.nameProducts,
                 idProducts: getProductId?.id
             }
@@ -111,6 +116,7 @@ function AddOders() {
             <Card className="addOder">
                 <Form onFinish={handleFinish}
                  form={form}
+                 initialValues={initialValues}
                 >
                     <Form.Item
                         name="idCustomers"
@@ -191,6 +197,18 @@ function AddOders() {
                                 )
                             }
                         />
+                    </Form.Item>
+                    <Form.Item
+                        name="typePrices"
+                        label="Loại Khách Hàng"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Vui Lòng Loại Khách Hàng!",
+                            },
+                        ]}
+                    >
+                        <Switch defaultChecked={false}  checkedChildren="Giao Shoppe" unCheckedChildren="Giao Ngoài" />
                     </Form.Item>
                     <Form.Item>
                         <Button

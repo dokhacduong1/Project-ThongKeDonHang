@@ -1,74 +1,96 @@
 import { useEffect, useState } from "react";
 import { getDataShoppe } from "../../services/shoppeApi";
-import { Card, Col, Row } from "antd";
+import { Button, Card, Col, Form, Input, InputNumber, Row, Select } from "antd";
 import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db, auth } from "../../Config/Firebase";
 import "./StatisticalShoppe.scss"
+import {
+
+    SearchOutlined,
+
+} from "@ant-design/icons";
 function StatisticShoppe() {
     const [dataShoppe, setDataShoppe] = useState([]);
-    const productsCollectionRef = collection(db, "products");
-    const fetchApi = async () => {
-        // const responeShoppe = await getDataShoppe();
-        // //self trong đây nó sẽ là biến lưu cái mảng ra mảng tên selsf rồi chạy so sánh vs cái item id console.log(sẽ thấy nó sẽ là một mảng tempResponeShoppe chạy liên tục so sánh với item)
-        // //đây là check trong mảng có phần tử trùng nhau ta lấy itemId để check
-        // const uniqueObjects = responeShoppe.filter((item, index, self) => {
-        //     return index === self.findIndex((t) => (
-        //       t.itemid === item.itemid
-        //     ));
-        //   });
-       
-        // uniqueObjects.sort((a, b) => b.sold -a.sold);
-        // setDataShoppe(uniqueObjects)
-
-        const responseProducts = await getDocs(productsCollectionRef);
-        const dataDocAllProducts = responseProducts.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data())
-        dataDocAllProducts.map(async (dataMap)=>{
-            const productsDoc = doc(db, "products", dataMap.id);
-            const objectNew = {
-                profitProduct:Math.round(dataMap.priceProducts*0.15)
-            }
-            console.log(objectNew)
-            try {
-                // await updateDoc(productsDoc, objectNew);
-                console.log("ok")
-            }
-            catch{
-
-            }
-        })
+    const getProductsList = async(keyword,newest=1)=>{
+        const arrayData = []
+        for(let i = 0;i<=newest-1;i++){
+            const apiUrl = `https://hello-world-purple-mountain-2148.dokhacduong3.workers.dev/api/v4/search/search_items?by=sales&keyword=${keyword}&limit=60&newest=${i*60}`;
+            const respone = await fetch(apiUrl);
+            const result = await respone.json()
+            
+            result?.items.map(dataMap=>arrayData.push(dataMap?.item_basic))
+        }
+        return arrayData
     }
+   
     useEffect(() => {
-
-        fetchApi();
+      
+        
     }, []);
-    console.log(dataShoppe)
+    const handleForm  = async (valueForm)=>{
+        const data = await getProductsList(valueForm.keyword,valueForm.numberPage)
+        setDataShoppe(data)
+
+    }
+
     return (
         <>
-            {/* {
-                dataShoppe && (<>
-                    <Card className="ctatisticShoppe">
-                        <Row className="ctatisticShoppe__row" gutter={[15, 15]}>
-                            {
-                                dataShoppe.map((dataMap, index) => (
+           <Form
+                    style={{ textAlign: "center" }}
+                    className="search__welcome-form"
+                    layout="inline"
+                    rules={{
+                        remember: true,
+                    }}
+                    onFinish={handleForm}
+                >
+                    <Form.Item name="numberPage" className="search__welcome-item" >
+                        <InputNumber
+                            min={0}
+                            max={17}
 
-                                    <Col className="ctatisticShoppe__col" span={8} key={index}>
-                                        <div className="ctatisticShoppe__image">
-                                            <img className="ctatisticShoppe__imageShoppe" src={`https://down-vn.img.susercontent.com/file/${dataMap.image}`} alt={dataMap.image} />
-                                        </div>
-                                        <p>Tên Sản Phẩm: <strong>{dataMap.name}</strong></p>
-                                        <p>Giá: <strong>{dataMap.price / 100000}</strong></p>
-                                        <p>Số Lượng Bán: <strong>{dataMap.sold}</strong></p>
-                                        <p>Địa Chỉ Shop: <strong>{dataMap.shop_location}</strong></p>
-                                        <p>Voucher: <strong>{dataMap?.voucher_info?.voucher_code}  {dataMap?.voucher_info?.label}</strong></p>
-                                    </Col>
+                            className="search__welcome-form-input"
+                            placeholder="Số Trang Shoppe"
+                        />
+                    </Form.Item>
 
-                                ))
+                    <Form.Item name="keyword" className="search__welcome-item">
+                        <Input
+                            style={{ width: 230 }}
+                            className="search__welcome-form-input"
+                            placeholder="Nhập Từ Khóa..."
+                        />
+                    </Form.Item>
 
-                            }
-                        </Row>
-                    </Card>
-                </>)
-            } */}
+                    <Form.Item className="search__welcome-item">
+                        <Button
+                            className="search__welcome-form-button"
+                            type="primary"
+                            htmlType="submit"
+                        >
+                            <SearchOutlined /> Search
+                        </Button>
+                    </Form.Item>
+                  
+                </Form>
+                {
+                    dataShoppe &&(<>
+                        <Card>
+                            <Row gutter={[15,15]}>
+                                {
+                                    dataShoppe.map(dataMap=>(
+                                        <Col span={8}>
+                                             <img className="ctatisticShoppe__imageShoppe" src={`https://down-vn.img.susercontent.com/file/${dataMap.image}`} alt={dataMap.image}></img>
+                                            <p>Gía Sản Phẩm: <strong>{dataMap.price/100000}</strong></p>
+                                        </Col>
+                                       
+                                    ))
+                                }
+                            </Row>
+
+                        </Card>
+                    </>)
+                }
 
         </>
     )
