@@ -13,6 +13,7 @@ function CategoryManagement() {
   const categorysCollectionRef = collection(db, "categorys");
   const [dataSource, setDataSource] = useState([]);
   const [tempDataSource, setTempDataSource] = useState([]);
+  const [deleteId, setDeleteId] = useState([])
   const fetchApi = async () => {
     const data = await getDocs(categorysCollectionRef);
     const dataDocAllCategorys = data.docs
@@ -28,10 +29,21 @@ function CategoryManagement() {
     fetchApi();
   }, []);
 
-  const handeleDelete = async (idRecord) => {
-    const categoryDoc = doc(db, "categorys", idRecord);
-    await deleteDoc(categoryDoc);
-    fetchApi();
+  const handeleDelete = async () => {
+    if(deleteId.length>0){
+      deleteId.map(async (dataMap)=>{
+        const categoryDoc = doc(db, "categorys", dataMap.id);
+        await deleteDoc(categoryDoc);
+        setDeleteId([]);
+        fetchApi();
+      })
+  };
+}
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setDeleteId(selectedRows);
+    },
+
   };
   //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
   const handleForm = async (valueForm) => {
@@ -75,25 +87,6 @@ function CategoryManagement() {
               <FormEditCategory record={record} fetchApiLoad={fetchApi} />
             </span>
 
-            <span
-              style={{
-                color: "red",
-                border: "1px solid red",
-                borderRadius: "4px",
-              }}
-            >
-              <Popconfirm
-                title="Xóa Danh Mục"
-                description="Bạn Có Muốn Xóa Danh Mục Này Không ?"
-                okText="Ok"
-                cancelText="No"
-                onConfirm={() => {
-                  handeleDelete(record.id);
-                }}
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </span>
           </div>
         </>
       ),
@@ -157,7 +150,37 @@ function CategoryManagement() {
             <ReloadOutlined /> Reset
           </Button>
         </Form>
-        <Table rowKey="id" dataSource={dataSource} columns={columns} />;
+        {
+          deleteId.length > 0 && (<>
+           
+            <span
+              style={{
+                color: "red",
+               
+                borderRadius: "4px",
+                padding:"5px"
+              }}
+            >
+              <Popconfirm
+                title="Xóa Danh Mục"
+                description="Bạn Có Muốn Xóa Danh Mục Này Không ?"
+                okText="Ok"
+                cancelText="No"
+                onConfirm={() => {
+                  handeleDelete();
+                }}
+              >
+                <span style={{fontSize:"20px",cursor:"pointer"}}>Xóa</span>
+              </Popconfirm>
+              </span>
+            
+          </>)
+        }
+        <Table  rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
+
+        }}  rowKey="id" dataSource={dataSource} columns={columns} />;
       </Card>
     </>
   );

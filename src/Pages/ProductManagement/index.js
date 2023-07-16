@@ -28,7 +28,7 @@ function ProductManagement() {
     const sourceShopCollectionRef = collection(db, "sourceShop");
     const [dataSource, setDataSource] = useState([]);
     const [tempDataSource, setTempDataSource] = useState([]);
-
+    const [deleteId, setDeleteId] = useState([])
     const fetchApi = async () => {
         const dataProducts = await getDocs(productsCollectionRef);
         const dataCategorys = await getDocs(categorysCollectionRef);
@@ -67,10 +67,21 @@ function ProductManagement() {
         fetchApi();
     }, []);
 
-    const handeleDelete = async (idRecord) => {
-        const categoryDoc = doc(db, "products", idRecord);
-        await deleteDoc(categoryDoc);
-        fetchApi();
+    const handeleDelete = async () => {
+        if (deleteId.length > 0) {
+            deleteId.map(async (dataMap) => {
+                const categoryDoc = doc(db, "products", dataMap.id);
+                await deleteDoc(categoryDoc);
+                setDeleteId([]);
+                fetchApi();
+            })
+        };
+    };
+    const rowSelection = {
+        onChange: (selectedRowKeys, selectedRows) => {
+            setDeleteId(selectedRows);
+        },
+
     };
     //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
     const handleForm = async (valueForm) => {
@@ -138,7 +149,7 @@ function ProductManagement() {
             title: "Giá Gốc Sản Phẩm",
             dataIndex: "initialPriceProducts",
             key: "initialPriceProducts",
-            render:(_,record)=>(
+            render: (_, record) => (
                 <>{Math.round(record.initialPriceProducts).toLocaleString()}</>
             ),
             align: "center",
@@ -147,7 +158,7 @@ function ProductManagement() {
             title: "Giá Bán Sản Phẩm",
             dataIndex: "priceProducts",
             key: "priceProducts",
-            render:(_,record)=>(
+            render: (_, record) => (
                 <>{Math.round(record.priceProducts).toLocaleString()}</>
             ),
             align: "center",
@@ -195,25 +206,7 @@ function ProductManagement() {
                             <FormEditProducts record={record} fetchApiLoad={fetchApi} />
                         </span>
 
-                        <span
-                            style={{
-                                color: "red",
-                                border: "1px solid red",
-                                borderRadius: "4px",
-                            }}
-                        >
-                            <Popconfirm
-                                title="Xóa Danh Mục"
-                                description="Bạn Có Muốn Xóa Sản Phẩm Này Không ?"
-                                okText="Ok"
-                                cancelText="No"
-                                onConfirm={() => {
-                                    handeleDelete(record.id);
-                                }}
-                            >
-                                <DeleteOutlined />
-                            </Popconfirm>
-                        </span>
+
                     </div>
                 </>
             ),
@@ -277,7 +270,38 @@ function ProductManagement() {
                         <ReloadOutlined /> Reset
                     </Button>
                 </Form>
+                {
+                    deleteId.length > 0 && (<>
+
+                        <span
+                            style={{
+                                color: "red",
+
+                                borderRadius: "4px",
+                                padding: "5px"
+                            }}
+                        >
+                            <Popconfirm
+                                title="Xóa Sản Phẩm"
+                                description="Bạn Có Muốn Xóa Sản Phẩm Này Không ?"
+                                okText="Ok"
+                                cancelText="No"
+                                onConfirm={() => {
+                                    handeleDelete();
+                                }}
+                            >
+                                <span style={{ fontSize: "20px", cursor: "pointer" }}>Xóa</span>
+                            </Popconfirm>
+                        </span>
+
+                    </>)
+                }
                 <Table
+                    rowSelection={{
+                        type: "checkbox",
+                        ...rowSelection,
+
+                    }}
                     rowKey="id"
                     dataSource={dataSource}
                     columns={columns}

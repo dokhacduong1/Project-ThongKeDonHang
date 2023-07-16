@@ -32,6 +32,7 @@ function CustomersManagement() {
   const customerCollectionRef = collection(db, "customer");
   const [dataSource, setDataSource] = useState([]);
   const [tempDataSource, setTempDataSource] = useState([]);
+  const [deleteId, setDeleteId] = useState([])
   const fetchApi = async () => {
     const data = await getDocs(customerCollectionRef);
     const dataDocAllCustomer = data.docs
@@ -56,10 +57,17 @@ function CustomersManagement() {
   }, []);
   const sumPriceProfit = dataSource.reduce((x, y) => x + y.sumProfit, 0);
 
-  const handeleDelete = async (idRecord) => {
-    const categoryDoc = doc(db, "customer", idRecord);
-    await deleteDoc(categoryDoc);
-    fetchApi();
+  const handeleDelete = async () => {
+    if(deleteId.length>0){
+      deleteId.map(async (dataMap)=>{
+        const categoryDoc = doc(db, "customer", dataMap.id);
+        await deleteDoc(categoryDoc);
+        setDeleteId([]);
+        fetchApi();
+      })
+      
+    }
+   
   };
   //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
   const handleForm = async (valueForm) => {
@@ -93,7 +101,7 @@ function CustomersManagement() {
       title: "Tổng Tiền Lời 1 Khách Hàng",
       dataIndex: "sumProfit",
       key: "sumProfit",
-      render:(_,record)=>(
+      render: (_, record) => (
         <>{Math.round(record.sumProfit)}</>
       ),
       align: "center",
@@ -132,7 +140,7 @@ function CustomersManagement() {
       align: "center",
     },
     {
-      title: "Hành Động",
+      title: <>Hành Động</>,
       dataIndex: "ok",
       key: "ok",
       render: (_, record) => (
@@ -148,32 +156,19 @@ function CustomersManagement() {
               <FormEditCustomers record={record} fetchApiLoad={fetchApi} />
             </span>
 
-            <span
-              style={{
-                color: "red",
-                border: "1px solid red",
-                borderRadius: "4px",
-              }}
-            >
-              <Popconfirm
-                title="Xóa Danh Mục"
-                description="Bạn Có Muốn Xóa Khách Hàng Này Không ?"
-                okText="Ok"
-                cancelText="No"
-                onConfirm={() => {
-                  handeleDelete(record.id);
-                }}
-              >
-                <DeleteOutlined />
-              </Popconfirm>
-            </span>
+           
           </div>
         </>
       ),
       align: "center",
     },
   ];
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      setDeleteId(selectedRows);
+    },
 
+  };
   return (
     <>
       <Card className="customersManagement">
@@ -187,7 +182,7 @@ function CustomersManagement() {
           onFinish={handleForm}
         >
           <Form.Item
-          className="search__welcome-item"
+            className="search__welcome-item"
             name="select"
             rules={[
               {
@@ -231,38 +226,68 @@ function CustomersManagement() {
           </Button>
         </Form>
         <Row gutter={16}>
-          <Col lg={12} md = {12} xs={24}>
-            <Card bordered={false} style={{textAlign:"center"}}>
+          <Col lg={12} md={12} xs={24}>
+            <Card bordered={false} style={{ textAlign: "center" }}>
               <Statistic
                 title="Số Khách Hàng"
                 value={dataSource.length}
-               
+
                 valueStyle={{
                   color: "rgb(16, 82, 136)",
                 }}
                 prefix={<UserOutlined />}
-               
+
               />
             </Card>
           </Col>
-          <Col lg={12} md = {12} xs={24}>
-            <Card bordered={false} style={{textAlign:"center"}}>
+          <Col lg={12} md={12} xs={24}>
+            <Card bordered={false} style={{ textAlign: "center" }}>
               <Statistic
                 title="Tổng Tiền Lời"
                 value={sumPriceProfit}
-              
+
                 valueStyle={{
                   color: "rgb(16, 82, 136)",
                 }}
-               
+
                 prefix={<ArrowUpOutlined />}
               />
             </Card>
           </Col>
         </Row>
-        <Table rowKey="id" dataSource={dataSource} columns={columns} scroll={{
-                        x: 300,
-                    }}/>;
+        {
+          deleteId.length > 0 && (<>
+           
+            <span
+              style={{
+                color: "red",
+               
+                borderRadius: "4px",
+                padding:"5px"
+              }}
+            >
+              <Popconfirm
+                title="Xóa Khách Hàng"
+                description="Bạn Có Muốn Xóa Khách Hàng Này Không ?"
+                okText="Ok"
+                cancelText="No"
+                onConfirm={() => {
+                  handeleDelete();
+                }}
+              >
+                <span style={{fontSize:"20px",cursor:"pointer"}}>Xóa</span>
+              </Popconfirm>
+              </span>
+            
+          </>)
+        }
+        <Table rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
+
+        }} rowKey="id" dataSource={dataSource} columns={columns} scroll={{
+          x: 300,
+        }} />;
       </Card>
     </>
   );
