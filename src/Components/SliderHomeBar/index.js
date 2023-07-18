@@ -88,7 +88,11 @@ function SliderHomeBar() {
             children: [
                 {
                   key: '5-1',
-                  label: <Link to="statistical-management">Quản Lý Thống Kê</Link>,
+                  label: <Link to="statistical-management">Thống Kê Đơn Hàng</Link>,
+                },
+                {
+                  key: '5-2',
+                  label: <Link to="statistical-shoppe">Thống Kê Shoppe</Link>,
                 }
                
               ],

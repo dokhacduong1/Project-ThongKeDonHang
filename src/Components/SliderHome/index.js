@@ -34,7 +34,8 @@ function SliderHome(){
           getItem('/add-customers-management',<Link to="add-customers-management">Quản Lý Khách Hàng</Link>,null)
         ]),
         getItem('statistical',<span className="layout__slider-item">Thống Kê</span>, <span className="layout__slider-item"><StockOutlined /></span>,[
-          getItem('/statistical-management',<Link to="statistical-management">Quản Lý Thống Kê</Link>,null),
+          getItem('/statistical-management',<Link to="statistical-management">Thống Kê Đơn Hàng</Link>,null),
+          getItem('/statistical-shoppe',<Link to="statistical-shoppe">Thống Kê Shoppe</Link>,null),
          
         ]),
       ];
