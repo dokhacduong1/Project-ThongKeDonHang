@@ -5,7 +5,7 @@ import "./StatisticalShoppe.scss";
 import { SearchOutlined,MoneyCollectOutlined } from "@ant-design/icons";
 function StatisticShoppe() {
     const [dataShoppe, setDataShoppe] = useState([]);
-
+    const [loading, setLoading] = useState(false);
     const getProductsList = async (keyword, newest = 1) => {
         const arrayData = [];
         for (let i = 0; i <= newest - 1; i++) {
@@ -24,6 +24,7 @@ function StatisticShoppe() {
     }, []);
     const handleForm = async (valueForm) => {
         if(valueForm.keyword !== ""){
+            setLoading(true);
             const data = await getProductsList(valueForm.keyword, valueForm.numberPage);
             data.sort((a, b) => a.price - b.price);
             const newData = data.map((dataMap) => {
@@ -38,6 +39,7 @@ function StatisticShoppe() {
             });
     
             setDataShoppe(newData)
+            setLoading(false)
         }
       
     };
@@ -124,7 +126,7 @@ function StatisticShoppe() {
             </Form>
             {dataShoppe.length > 0 && (
                 <>
-                    <Card style={{ textAlign: "center" }}>
+                    <Card loading={loading} style={{ textAlign: "center" }}>
                         <Statistic
                             title={textSum}
                             value={Math.round(sum / dataShoppe.length)}
