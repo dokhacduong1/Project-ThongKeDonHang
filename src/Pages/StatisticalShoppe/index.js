@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Card, Col, Form, Input, InputNumber, Row, Select, Statistic } from "antd";
 import { Area } from "@ant-design/plots";
 import "./StatisticalShoppe.scss";
-import { SearchOutlined,UserOutlined } from "@ant-design/icons";
+import { SearchOutlined,MoneyCollectOutlined } from "@ant-design/icons";
 function StatisticShoppe() {
     const [dataShoppe, setDataShoppe] = useState([]);
 
@@ -132,7 +132,7 @@ function StatisticShoppe() {
                             valueStyle={{
                                 color: "rgb(16, 82, 136)",
                             }}
-                            prefix={<UserOutlined />}
+                            prefix={<MoneyCollectOutlined />}
 
                         />
                       
