@@ -14,7 +14,7 @@ import {
   Col,
   Statistic,
 } from "antd";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../Config/Firebase";
 import {
@@ -32,7 +32,7 @@ function CustomersManagement() {
   const customerCollectionRef = collection(db, "customer");
   const [dataSource, setDataSource] = useState([]);
   const [tempDataSource, setTempDataSource] = useState([]);
-  const [deleteId, setDeleteId] = useState([])
+  const [deleteId, setDeleteId] = useState([]);
   const fetchApi = async () => {
     const data = await getDocs(customerCollectionRef);
     const dataDocAllCustomer = data.docs
@@ -58,16 +58,14 @@ function CustomersManagement() {
   const sumPriceProfit = dataSource.reduce((x, y) => x + y.sumProfit, 0);
 
   const handeleDelete = async () => {
-    if(deleteId.length>0){
-      deleteId.map(async (dataMap)=>{
+    if (deleteId.length > 0) {
+      deleteId.map(async (dataMap) => {
         const categoryDoc = doc(db, "customer", dataMap.id);
         await deleteDoc(categoryDoc);
         setDeleteId([]);
         fetchApi();
-      })
-      
+      });
     }
-   
   };
   //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
   const handleForm = async (valueForm) => {
@@ -101,9 +99,7 @@ function CustomersManagement() {
       title: "Tổng Tiền Lời 1 Khách Hàng",
       dataIndex: "sumProfit",
       key: "sumProfit",
-      render: (_, record) => (
-        <>{Math.round(record.sumProfit)}</>
-      ),
+      render: (_, record) => <>{Math.round(record.sumProfit)}</>,
       align: "center",
     },
     {
@@ -155,8 +151,6 @@ function CustomersManagement() {
             >
               <FormEditCustomers record={record} fetchApiLoad={fetchApi} />
             </span>
-
-           
           </div>
         </>
       ),
@@ -167,8 +161,115 @@ function CustomersManagement() {
     onChange: (selectedRowKeys, selectedRows) => {
       setDeleteId(selectedRows);
     },
-
   };
+
+  const expandedRowRender =  (record) => {
+    const handleDeleteOders= async (idOders) => {
+      const checkData = record.oderProducts.map((dataMap) => {
+        const checkOders = dataMap.oders.filter(
+          (dataFilter) => dataFilter.id !== idOders
+        );
+        return {
+          date: dataMap.date,
+          oders: checkOders,
+        };
+      });
+     record.oderProducts = checkData
+     const customerDoc = doc(db, "customer", record.id);
+     try {
+      await updateDoc(customerDoc, record);
+      fetchApi();
+     }catch{
+
+     }
+    };
+    const dataConvert = record.oderProducts.map((dataMap) => dataMap);
+    const handeleDeleteDate = async (idDate)=>{
+      const checkData = record.oderProducts.filter(dataFilter=>dataFilter.id !== idDate);
+      record.oderProducts =checkData
+      const customerDoc = doc(db, "customer", record.id);
+      try {
+       await updateDoc(customerDoc, record);
+       fetchApi();
+      }catch{
+ 
+      }
+    }
+    const liteColums = [
+      {
+        title: "Ngày Giao Hàng",
+        dataIndex: "date",
+        key: "date",
+        align: "center",
+      },
+      {
+        title: "Tên Sản Phẩm",
+        dataIndex: "nameProducts",
+        key: "nameProducts",
+        render: (_, record) => {
+          return (
+            <>
+              {record.oders.map((dataMap, index) => (
+                <div key={index} style={{ padding: "5px 0" }}>
+                  <Tag color="#108ee9">{dataMap.nameProducts}</Tag>
+                  <Popconfirm
+                    title="Xóa Đơn hàng"
+                    description="Bạn Có Muốn Xóa Đơn Hàng Này Không ?"
+                    okText="Ok"
+                    cancelText="No"
+                    onConfirm={() => {
+                      handleDeleteOders(dataMap.id);
+                    }}
+                  >
+                    <span style={{ cursor: "pointer" }}>
+                      {" "}
+                      <Tag bordered={false} color="red">
+                        Xóa
+                      </Tag>
+                    </span>
+                  </Popconfirm>
+                </div>
+              ))}
+            </>
+          );
+        },
+        align: "center",
+      },
+      {
+        title: "Hành Động 2",
+        dataIndex: "action",
+        key: "action",
+        render:(_,record)=>(
+          <span
+          style={{
+            color: "red",
+           
+            borderRadius: "4px",
+            padding:"5px"
+          }}
+        >
+          <Popconfirm
+            title="Xóa Danh Mục"
+            description="Bạn Có Muốn Xóa Danh Mục Này Không ?"
+            okText="Ok"
+            cancelText="No"
+            onConfirm={() => {
+              handeleDeleteDate(record.id);
+            }}
+          >
+            <span style={{fontSize:"20px",cursor:"pointer"}}><DeleteOutlined/></span>
+          </Popconfirm>
+          </span>
+        )
+      }
+    ];
+    return (
+      <>
+        <Table rowKey="date" columns={liteColums} dataSource={dataConvert} />
+      </>
+    );
+  };
+
   return (
     <>
       <Card className="customersManagement">
@@ -231,12 +332,10 @@ function CustomersManagement() {
               <Statistic
                 title="Số Khách Hàng"
                 value={dataSource.length}
-
                 valueStyle={{
                   color: "rgb(16, 82, 136)",
                 }}
                 prefix={<UserOutlined />}
-
               />
             </Card>
           </Col>
@@ -245,25 +344,22 @@ function CustomersManagement() {
               <Statistic
                 title="Tổng Tiền Lời"
                 value={sumPriceProfit}
-
                 valueStyle={{
                   color: "rgb(16, 82, 136)",
                 }}
-
                 prefix={<ArrowUpOutlined />}
               />
             </Card>
           </Col>
         </Row>
-        {
-          deleteId.length > 0 && (<>
-           
+        {deleteId.length > 0 && (
+          <>
             <span
               style={{
                 color: "red",
-               
+
                 borderRadius: "4px",
-                padding:"5px"
+                padding: "5px",
               }}
             >
               <Popconfirm
@@ -275,19 +371,27 @@ function CustomersManagement() {
                   handeleDelete();
                 }}
               >
-                <span style={{fontSize:"20px",cursor:"pointer"}}>Xóa</span>
+                <span style={{ fontSize: "20px", cursor: "pointer" }}>Xóa</span>
               </Popconfirm>
-              </span>
-            
-          </>)
-        }
-        <Table rowSelection={{
-          type: "checkbox",
-          ...rowSelection,
-
-        }} rowKey="id" dataSource={dataSource} columns={columns} scroll={{
-          x: 300,
-        }} />;
+            </span>
+          </>
+        )}
+        <Table
+          rowSelection={{
+            type: "checkbox",
+            ...rowSelection,
+          }}
+          rowKey="id"
+          dataSource={dataSource}
+          columns={columns}
+          scroll={{
+            x: 300,
+          }}
+          expandable={{
+            expandedRowRender,
+          }}
+        />
+        ;
       </Card>
     </>
   );

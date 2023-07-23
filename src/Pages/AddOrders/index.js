@@ -69,7 +69,8 @@ function AddOders() {
                         idProducts: getProductId?.id,
                         id:generateRandomID(50)
                     }
-                ]
+                ],
+                id:generateRandomID(100)
             }
             customerFullDocData?.oderProducts?.push(objectNew);
           

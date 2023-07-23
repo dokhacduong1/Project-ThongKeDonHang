@@ -34,15 +34,13 @@ function TestA() {
     useEffect(() => {
         fetchApi();
     }, []);
+    const handleDeleteLite = async (record)=>{
+        console.log(record)
+    }
     const expandedRowRender = (record) => {
-        const dataConvert = record.oderProducts.map(dataMap=>{
-            const dataLite = dataMap.oders.map(dataMapLite=>(dataMapLite.nameProducts));
-           return({
-                date:dataMap.date,
-                nameProducts:dataLite
-           })
-        })
-       console.log(record)
+
+        const dataConvert = record.oderProducts.map(dataMap=>dataMap)
+       console.log(dataConvert)
         const liteColums =[
             {
                 title: 'Ngày Giao Hàng',
@@ -53,18 +51,19 @@ function TestA() {
                 title: 'Tên Sản Phẩm',
                 dataIndex: 'nameProducts',
                 key: "nameProducts",
-                render:(_,record)=>(
-                    <>
+                render:(_,record)=>{
+                    return(<>
                         {
-                            record.nameProducts.map((dataMap,index)=>(
-                                <div key={index} style={{padding:"5px 0"}}>
-                                     <Tag color="#108ee9">{dataMap}</Tag>
-                                </div>
-                               
-                            ))
+                           record.oders.map((dataMap,index)=>(
+                            <div key={index} style={{padding:"5px 0"}}>
+                                 <Tag  color="#108ee9">{dataMap.nameProducts}</Tag>
+                                 <span onClick={()=>{handleDeleteLite(dataMap.id)}} style={{cursor:"pointer"}}>Xóa</span>
+                            </div>
+                           
+                           ))
                         }
-                    </>
-                )
+                    </>)
+                }
             },
         ];
         return (<>
