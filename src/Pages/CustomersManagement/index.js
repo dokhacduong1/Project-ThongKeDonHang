@@ -14,7 +14,13 @@ import {
   Col,
   Statistic,
 } from "antd";
-import { collection, deleteDoc, doc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../Config/Firebase";
 import {
@@ -163,38 +169,44 @@ function CustomersManagement() {
     },
   };
 
-  const expandedRowRender =  (record) => {
-    const handleDeleteOders= async (idOders) => {
+  const expandedRowRender = (record) => {
+    const dataConvert = record.oderProducts.map((dataMap) => dataMap);
+    const handleDeleteOders = async (idOders) => {
       const checkData = record.oderProducts.map((dataMap) => {
         const checkOders = dataMap.oders.filter(
           (dataFilter) => dataFilter.id !== idOders
         );
-        return {
-          date: dataMap.date,
-          oders: checkOders,
-        };
-      });
-     record.oderProducts = checkData
-     const customerDoc = doc(db, "customer", record.id);
-     try {
-      await updateDoc(customerDoc, record);
-      fetchApi();
-     }catch{
-
-     }
-    };
-    const dataConvert = record.oderProducts.map((dataMap) => dataMap);
-    const handeleDeleteDate = async (idDate)=>{
-      const checkData = record.oderProducts.filter(dataFilter=>dataFilter.id !== idDate);
-      record.oderProducts =checkData
+        if (checkOders.length > 0) {
+          return {
+            date: dataMap.date,
+            oders: checkOders,
+            id: dataMap.id,
+          };
+        }
+       
+      }).filter((dataFilter) => dataFilter !== undefined);;
+     
+      record.oderProducts = checkData;
+    
       const customerDoc = doc(db, "customer", record.id);
       try {
-       await updateDoc(customerDoc, record);
-       fetchApi();
-      }catch{
- 
-      }
-    }
+        await updateDoc(customerDoc, record);
+        fetchApi();
+      } catch {}
+    };
+
+    const handeleDeleteDate = async (idDate) => {
+      const checkData = record.oderProducts.filter(
+        (dataFilter) => dataFilter.id !== idDate
+      );
+      record.oderProducts = checkData;
+
+      const customerDoc = doc(db, "customer", record.id);
+      try {
+        await updateDoc(customerDoc, record);
+        fetchApi();
+      } catch { }
+    };
     const liteColums = [
       {
         title: "Ngày Giao Hàng",
@@ -239,29 +251,31 @@ function CustomersManagement() {
         title: "Hành Động 2",
         dataIndex: "action",
         key: "action",
-        render:(_,record)=>(
+        render: (_, record) => (
           <span
-          style={{
-            color: "red",
-           
-            borderRadius: "4px",
-            padding:"5px"
-          }}
-        >
-          <Popconfirm
-            title="Xóa Danh Mục"
-            description="Bạn Có Muốn Xóa Danh Mục Này Không ?"
-            okText="Ok"
-            cancelText="No"
-            onConfirm={() => {
-              handeleDeleteDate(record.id);
+            style={{
+              color: "red",
+
+              borderRadius: "4px",
+              padding: "5px",
             }}
           >
-            <span style={{fontSize:"20px",cursor:"pointer"}}><DeleteOutlined/></span>
-          </Popconfirm>
+            <Popconfirm
+              title="Xóa Ngày"
+              description="Bạn Có Muốn Xóa Ngày Này Không ?"
+              okText="Ok"
+              cancelText="No"
+              onConfirm={() => {
+                handeleDeleteDate(record.id);
+              }}
+            >
+              <span style={{ fontSize: "20px", cursor: "pointer" }}>
+                <DeleteOutlined />
+              </span>
+            </Popconfirm>
           </span>
-        )
-      }
+        ),
+      },
     ];
     return (
       <>
