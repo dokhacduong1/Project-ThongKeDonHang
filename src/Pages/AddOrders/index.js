@@ -4,6 +4,7 @@ import { auth, db } from "../../Config/Firebase";
 import { useEffect, useState } from "react";
 import "./AddOders.scss"
 import { getDataTime, validateDate } from "../../Helpers/dataTime";
+import { generateRandomID } from "../../Helpers/randomId";
 function AddOders() {
     const customerCollectionRef = collection(db, "customer");
     const productsCollectionRef = collection(db, "products");
@@ -65,7 +66,8 @@ function AddOders() {
                     {
                         profit: profitAll * valueForm.count,
                         nameProducts: getProductId?.nameProducts,
-                        idProducts: getProductId?.id
+                        idProducts: getProductId?.id,
+                        id:generateRandomID(50)
                     }
                 ]
             }
@@ -90,7 +92,8 @@ function AddOders() {
             const objectNew = {
                 profit: profitAll * valueForm.count,
                 nameProducts: getProductId?.nameProducts,
-                idProducts: getProductId?.id
+                idProducts: getProductId?.id,
+                id:generateRandomID(50)
             }
             customerFullDocData?.oderProducts[checkIndex].oders.push(objectNew)
             try {

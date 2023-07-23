@@ -18,6 +18,7 @@ import CustomersManagement from "../Pages/CustomersManagement";
 import AddOders from "../Pages/AddOrders";
 import StatisticalManagement from "../Pages/StatisticalManagement";
 import StatisticShoppe from "../Pages/StatisticalShoppe";
+import TestA from "../Pages/TestA";
 
 export const routes = [
   {
@@ -90,6 +91,10 @@ export const routes = [
           {
             path:"statistical-shoppe",
             element:<StatisticShoppe/>
+          },
+          {
+            path:"test",
+            element:<TestA/>
           }
         ],
       },
