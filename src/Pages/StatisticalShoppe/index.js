@@ -26,15 +26,18 @@ function StatisticShoppe() {
         if(valueForm.keyword !== ""){
             setLoading(true);
             const data = await getProductsList(valueForm.keyword, valueForm.numberPage);
-            data.sort((a, b) => a.price - b.price);
-            const newData = data.map((dataMap) => {
+          
+           const dataFilter = data.filter(dataFilter=>dataFilter.name.includes(valueForm.keyword))
+           dataFilter.sort((a, b) => a.price - b.price);
+           
+            const newData = dataFilter.map((dataMap) => {
                 const objectNew = {
                     nameProduct: dataMap.name,
                     price: dataMap.price / 100000,
                     sold: dataMap.sold,
                     image: `https://down-vn.img.susercontent.com/file/${dataMap.image}`,
                 };
-                console.log(objectNew);
+              
                 return objectNew;
             });
     

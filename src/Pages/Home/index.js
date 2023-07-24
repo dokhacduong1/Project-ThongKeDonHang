@@ -4,7 +4,7 @@ import { auth } from "../../Config/Firebase";
 
 
 function Home() {
-  console.log(auth?.currentUser?.uid)
+ 
   return (
     <>
       <Card className="home">

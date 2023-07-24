@@ -35,12 +35,12 @@ function TestA() {
         fetchApi();
     }, []);
     const handleDeleteLite = async (record)=>{
-        console.log(record)
+       
     }
     const expandedRowRender = (record) => {
 
         const dataConvert = record.oderProducts.map(dataMap=>dataMap)
-       console.log(dataConvert)
+     
         const liteColums =[
             {
                 title: 'Ngày Giao Hàng',

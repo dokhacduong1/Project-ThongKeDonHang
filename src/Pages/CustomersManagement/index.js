@@ -6,8 +6,6 @@ import {
   Popconfirm,
   Table,
   Select,
-  Steps,
-  Badge,
   Tag,
   Popover,
   Row,
