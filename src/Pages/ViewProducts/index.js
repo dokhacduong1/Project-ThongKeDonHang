@@ -31,7 +31,7 @@ function ViewProducts() {
     const timeDiff = date2.getTime() - date1.getTime();
    
     const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-   
+  
     return (
         <>
             <Card className="viewProducts">
@@ -41,11 +41,7 @@ function ViewProducts() {
                 <h2>{product.nameProducts}</h2>
                 <p>
                     <i>
-                        Giá Gốc: {product.initialPriceProducts} + {"("}
-                        {product.initialPriceProducts}+{product.taxProducts}% Thuế{")"} +{" "}
-                        {"("}
-                        {product.initialPriceProducts}+{product.revenuePercentageProducts}%
-                        Lời{")"}
+                       ({product.taxProducts}+{product.revenuePercentageProducts}+{product.initialPriceProducts})/(0.9-0.15)
                     </i>{" "}
                     ---{">"} <strong>Giá Bán {product.priceProducts} </strong>
                 </p>
