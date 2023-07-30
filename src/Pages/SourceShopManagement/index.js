@@ -2,20 +2,37 @@ import { Button, Card, Form, Input, Popconfirm, Select, Table } from "antd";
 import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../Config/Firebase";
-import { DeleteOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  SearchOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 
-import "./SourceShopManagement.scss"
+import "./SourceShopManagement.scss";
 import FormEditSourceShop from "../../Components/FormEditSourceShop";
 function SourceShopManagement() {
   const sourceShopCollectionRef = collection(db, "sourceShop");
+  const productsCollectionRef = collection(db, "products");
   const [dataSource, setDataSource] = useState([]);
+  const [dataProdcuts, setDataProdcut] = useState([]);
   const [tempDataSource, setTempDataSource] = useState([]);
-  const [deleteId, setDeleteId] = useState([])
+  const [deleteId, setDeleteId] = useState([]);
   const fetchApi = async () => {
-    const data = await getDocs(sourceShopCollectionRef);
-    const dataDocAllSourceShop = data.docs.filter(dataFilter => dataFilter.data().uidUser === auth?.currentUser?.uid).map(dataMap => dataMap.data());
-    setDataSource(dataDocAllSourceShop)
-    setTempDataSource(dataDocAllSourceShop)
+    const dataSourceShop = await getDocs(sourceShopCollectionRef);
+    const dataProduct = await getDocs(productsCollectionRef);
+    const dataDocAllSourceShop = dataSourceShop.docs
+      .filter(
+        (dataFilter) => dataFilter.data().uidUser === auth?.currentUser?.uid
+      )
+      .map((dataMap) => dataMap.data());
+    const dataDocAllProduct = dataProduct.docs
+      .filter(
+        (dataFilter) => dataFilter.data().uidUser === auth?.currentUser?.uid
+      )
+      .map((dataMap) => dataMap.data());
+    setDataSource(dataDocAllSourceShop);
+    setTempDataSource(dataDocAllSourceShop);
+    setDataProdcut(dataDocAllProduct);
   };
   const optionsSelect = [
     {
@@ -32,37 +49,47 @@ function SourceShopManagement() {
       deleteId.map(async (dataMap) => {
         const categoryDoc = doc(db, "sourceShop", dataMap.id);
         await deleteDoc(categoryDoc);
+        //Lọc sản phẩm của shop rồi xóa
+        const filterProductShop = dataProdcuts
+          .filter((dataFilter) => dataFilter.idSourceShop === dataMap.id)
+          .map((dataMap) => ({ id: dataMap.id }));
+
+        filterProductShop.map(async (dataMapProdcuts) => {
+          const productDoc = doc(db, "products", dataMapProdcuts.id);
+          await deleteDoc(productDoc);
+        });
+
         setDeleteId([]);
         fetchApi();
-      })
-    };
-  }
+      });
+    }
+  };
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setDeleteId(selectedRows);
     },
-
   };
   //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
   const handleForm = async (valueForm) => {
     if (valueForm.select !== "all") {
       //Hàm này convert hai cái về chữ thường xong check
       const dataDocAllCategorys = tempDataSource.filter((dataFilter) =>
-        dataFilter[valueForm.select].toLowerCase().includes((valueForm.keyword).toLowerCase())
+        dataFilter[valueForm.select]
+          .toLowerCase()
+          .includes(valueForm.keyword.toLowerCase())
       );
       setDataSource(dataDocAllCategorys);
     } else {
       setDataSource(tempDataSource);
     }
-  }
+  };
   const columns = [
     {
-      title: 'Tên Shop Nguồn',
-      dataIndex: 'nameShop',
-      key: 'nameShop',
-      align: 'center'
-    }
-    ,
+      title: "Tên Shop Nguồn",
+      dataIndex: "nameShop",
+      key: "nameShop",
+      align: "center",
+    },
     {
       title: "Link Shop",
       dataIndex: "linkShop",
@@ -72,9 +99,8 @@ function SourceShopManagement() {
           Link Shop
         </Button>
       ),
-      align: "center"
-    }
-    ,
+      align: "center",
+    },
     {
       title: "Hành Động",
       dataIndex: "ok",
@@ -91,15 +117,12 @@ function SourceShopManagement() {
             >
               <FormEditSourceShop record={record} fetchApiLoad={fetchApi} />
             </span>
-
           </div>
         </>
       ),
       align: "center",
     },
-
   ];
-
 
   return (
     <>
@@ -157,15 +180,14 @@ function SourceShopManagement() {
             <ReloadOutlined /> Reset
           </Button>
         </Form>
-        {
-          deleteId.length > 0 && (<>
-
+        {deleteId.length > 0 && (
+          <>
             <span
               style={{
                 color: "red",
 
                 borderRadius: "4px",
-                padding: "5px"
+                padding: "5px",
               }}
             >
               <Popconfirm
@@ -180,17 +202,20 @@ function SourceShopManagement() {
                 <span style={{ fontSize: "20px", cursor: "pointer" }}>Xóa</span>
               </Popconfirm>
             </span>
-
-          </>)
-        }
-        <Table rowSelection={{
-          type: "checkbox",
-          ...rowSelection,
-
-        }} rowKey='id' dataSource={dataSource} columns={columns} />;
+          </>
+        )}
+        <Table
+          rowSelection={{
+            type: "checkbox",
+            ...rowSelection,
+          }}
+          rowKey="id"
+          dataSource={dataSource}
+          columns={columns}
+        />
+        ;
       </Card>
-
     </>
-  )
+  );
 }
-export default SourceShopManagement
+export default SourceShopManagement;

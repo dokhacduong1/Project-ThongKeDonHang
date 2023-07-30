@@ -55,9 +55,9 @@ function ProductManagement() {
                         dataFilter.data().id === dataMap.idSourceShop
                 )
                 .map((dataMap) => dataMap.data());
-            console.log(checkLinkSourceShop)
+           
             dataMap.nameCategorys = checkLinkCategorys[0].nameCategory;
-            dataMap.nameShop = checkLinkSourceShop[0]?.nameShop;
+            dataMap.nameShop = checkLinkSourceShop[0]?.nameShop 
         });
 
         setTempDataSource(dataDocAllProducts);
@@ -92,10 +92,10 @@ function ProductManagement() {
             valueForm.select !== "quantitySold"
         ) {
             //Hàm này convert hai cái về chữ thường xong check
-            const dataDocAllProducts = tempDataSource.filter((dataFilter) =>
-                dataFilter[valueForm.select]
-                    .toLowerCase()
-                    .includes(valueForm.keyword.toLowerCase())
+            const dataDocAllProducts = tempDataSource.filter((dataFilter) =>{
+              return dataFilter[valueForm.select].toLowerCase().includes(valueForm.keyword.toLowerCase())
+            }
+               
             );
 
             setDataSource(dataDocAllProducts);
