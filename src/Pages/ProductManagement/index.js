@@ -55,8 +55,9 @@ function ProductManagement() {
                         dataFilter.data().id === dataMap.idSourceShop
                 )
                 .map((dataMap) => dataMap.data());
+            console.log(checkLinkSourceShop)
             dataMap.nameCategorys = checkLinkCategorys[0].nameCategory;
-            dataMap.nameShop = checkLinkSourceShop[0].nameShop;
+            dataMap.nameShop = checkLinkSourceShop[0]?.nameShop;
         });
 
         setTempDataSource(dataDocAllProducts);
