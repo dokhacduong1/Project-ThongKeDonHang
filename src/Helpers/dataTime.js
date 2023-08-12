@@ -71,7 +71,7 @@ export const sumArrayDate = (dataDocAll) => {
   return convertData.map((dataMap) => {
     return {
       year: dataMap,
-      value: dataAll[dataMap],
+      value: Math.round(dataAll[dataMap]),
     };
   });
 };

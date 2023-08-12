@@ -355,7 +355,7 @@ function CustomersManagement() {
             <Card bordered={false} style={{ textAlign: "center" }}>
               <Statistic
                 title="Tổng Tiền Lời"
-                value={sumPriceProfit}
+                value={Math.round(sumPriceProfit)}
                 valueStyle={{
                   color: "rgb(16, 82, 136)",
                 }}

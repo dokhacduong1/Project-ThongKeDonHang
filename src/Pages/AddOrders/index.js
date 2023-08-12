@@ -10,11 +10,12 @@ function AddOders() {
     const productsCollectionRef = collection(db, "products");
     const [optionsSelectCustomers, setOptionsSelectCustomers] = useState([]);
     const [optionsSelectProducts, setOptionsSelectProducts] = useState([]);
+    const [defaultCheck, setDefaultCheck] = useState(false)
     const [products, setProdcuts] = useState([]);
     const [form] = Form.useForm();
     const [messageApi, contextHolder] = message.useMessage();
     const initialValues = {
-        typePrices:false
+        typePrices: false
     }
     const fetchApi = async () => {
         const responseCustomers = await getDocs(customerCollectionRef);
@@ -51,20 +52,21 @@ function AddOders() {
     }, [])
     const handleFinish = async (valueForm) => {
         const getProductId = products.filter(dataFilter => dataFilter.id === valueForm.idProducts)[0];
-       
+
         const customerDoc = doc(db, "customer", valueForm.idCustomers);
-       
+
         const customerDocGet = await getDoc(customerDoc);
         const customerFullDocData = customerDocGet.data();
         const checkIndex = customerFullDocData?.oderProducts.findIndex(dataMap => dataMap.date === valueForm.dateCompletedOder);
         //Ở đây có hai trường hợp nếu check dc cái ngày đã hoàn thành chưa tồn tại thì phải tạo ra nó thêm data vào còn khi check được rồi ta lấy cái checkIndex kia là vị chí của mảng r thao tác ddataa trong mảng thôi
-        const profitAll = valueForm.typePrices ? getProductId?.profitProduct : getProductId?.profitProduct2
+        const profitAll = valueForm.typePrices ? valueForm.revenue - (getProductId?.initialPriceProducts * valueForm?.count) : valueForm?.count * (getProductId?.priceProducts - getProductId?.initialPriceProducts)
+       
         if (checkIndex === -1) {
             const objectNew = {
                 date: valueForm?.dateCompletedOder,
                 oders: [
                     {
-                        profit: profitAll * valueForm.count,
+                        profit: profitAll,
                         nameProducts: getProductId?.nameProducts,
                         idProducts: getProductId?.id,
                         id:generateRandomID(50)
@@ -73,10 +75,10 @@ function AddOders() {
                 id:generateRandomID(100)
             }
             customerFullDocData?.oderProducts?.push(objectNew);
-          
+
             try {
                 await updateDoc(customerDoc, customerFullDocData)
-              
+
                 form.resetFields();
                 messageApi.open({
                     type: "success",
@@ -89,9 +91,9 @@ function AddOders() {
                 });
             }
         } else {
-            
+
             const objectNew = {
-                profit: profitAll * valueForm.count,
+                profit: profitAll,
                 nameProducts: getProductId?.nameProducts,
                 idProducts: getProductId?.id,
                 id:generateRandomID(50)
@@ -99,7 +101,7 @@ function AddOders() {
             customerFullDocData?.oderProducts[checkIndex].oders.push(objectNew)
             try {
                 await updateDoc(customerDoc, customerFullDocData)
-               
+
                 form.resetFields();
                 messageApi.open({
                     type: "success",
@@ -112,15 +114,18 @@ function AddOders() {
                 });
             }
         }
-        
+
+    }
+    const onChangeSwitch = async (value) => {
+        setDefaultCheck(value)
     }
     return (
         <>
-         {contextHolder}
+            {contextHolder}
             <Card className="addOder">
                 <Form onFinish={handleFinish}
-                 form={form}
-                 initialValues={initialValues}
+                    form={form}
+                    initialValues={initialValues}
                 >
                     <Form.Item
                         name="idCustomers"
@@ -138,7 +143,7 @@ function AddOders() {
                             optionFilterProp="children"
                             filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                             filterSort={(optionA, optionB) =>
-                              (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
                             options={optionsSelectCustomers}
                         />
@@ -159,7 +164,7 @@ function AddOders() {
                             optionFilterProp="children"
                             filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                             filterSort={(optionA, optionB) =>
-                              (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                             }
                             options={optionsSelectProducts}
                         />
@@ -202,6 +207,8 @@ function AddOders() {
                             }
                         />
                     </Form.Item>
+                   
+
                     <Form.Item
                         name="typePrices"
                         label="Loại Khách Hàng"
@@ -212,8 +219,32 @@ function AddOders() {
                             },
                         ]}
                     >
-                        <Switch defaultChecked={false}  checkedChildren="Giao Shoppe" unCheckedChildren="Giao Ngoài" />
+                        <Switch defaultChecked={defaultCheck} onChange={onChangeSwitch} checkedChildren="Giao Shoppe" unCheckedChildren="Giao Ngoài" />
                     </Form.Item>
+                    {
+                        defaultCheck && (<>
+                            <Form.Item
+                                name="revenue"
+                                label="Doanh Thu VNĐ"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: "Vui Lòng Nhập Giá Gốc Sản Phẩm!",
+                                    },
+                                ]}
+                            >
+                                <InputNumber
+
+                                    formatter={(value) =>
+                                        `${value.toLocaleString()}`.replace(
+                                            /\B(?=(\d{3})+(?!\d))/g,
+                                            ","
+                                        )
+                                    }
+                                />
+                            </Form.Item>
+                        </>)
+                    }
                     <Form.Item>
                         <Button
                             type="primary"
