@@ -51,6 +51,7 @@ function CustomersManagement() {
       );
       dataMap.sumProfit = sumProfit;
     });
+   
     setDataSource(dataDocAllCustomer);
 
     setTempDataSource(dataDocAllCustomer);

@@ -20,7 +20,7 @@ function StatisticalManagement() {
             )
             .map((dataMap) => dataMap.data());
         const convertDateAll = sumArrayDate(dataDocAllCustomer);
-        console.log(convertDateAll)
+      
         convertDateAll.sort((a,b)=>(new Date(a.year) - new Date(b.year)))
        
         setData(convertDateAll);
