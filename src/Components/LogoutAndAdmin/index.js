@@ -11,7 +11,7 @@ function LogoutAndAdmin() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const handleLogout = () => {
-         dispatch(authentication(false));
+        dispatch(authentication(false));
         deleteAllCookies();
         navigate("/login");
     }

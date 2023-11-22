@@ -32,6 +32,7 @@ function AddSourceShop() {
             {contextHolder}
             <Card className="addSourceShop">
                 <Form onFinish={handleFinish}
+                layout="horizontal "
                  form={form}>
                     <Form.Item
                         name="nameShop"
