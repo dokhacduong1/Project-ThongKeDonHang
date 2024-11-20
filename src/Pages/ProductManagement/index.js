@@ -86,24 +86,43 @@ function ProductManagement() {
     };
     //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
     const handleForm = async (valueForm) => {
+        console.log(valueForm);
         if (
             valueForm.select !== "all" &&
             valueForm.select !== "expiredProduct" &&
-            valueForm.select !== "quantitySold"
+            valueForm.select !== "quantitySold" &&
+            valueForm.select !== "productisExpired"
         ) {
-            //Hàm này convert hai cái về chữ thường xong check
-            const dataDocAllProducts = tempDataSource.filter((dataFilter) =>{
-              return dataFilter[valueForm.select].toLowerCase().includes(valueForm.keyword.toLowerCase())
-            }
-               
-            );
-
+            
+            // Convert both to lowercase and check
+            const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
+                
+                return dataFilter[valueForm.select]?.toLowerCase().includes(valueForm.keyword.toLowerCase());
+            });
+        
             setDataSource(dataDocAllProducts);
         } else if (valueForm.select === "expiredProduct") {
-            const dataDocAllProducts = tempDataSource.filter(
-                (dataFilter) =>
-                    new Date(dataFilter.cycleProducts) < new Date(getDataTime())
-            );
+            const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
+               
+                const isExpired = new Date(dataFilter.cycleProducts) < new Date(getDataTime());
+                if(valueForm.keyword){
+                    const matchesKeyword = dataFilter["nameProducts"]?.toLowerCase().includes(valueForm.keyword?.toLowerCase()) || "";
+                    return isExpired && matchesKeyword;
+                }
+                
+                return isExpired;
+            });
+            setDataSource(dataDocAllProducts);
+        } else if (valueForm.select === "productisExpired") {
+            const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
+                const isNotExpired = new Date(dataFilter.cycleProducts) > new Date(getDataTime());
+                if(valueForm.keyword){
+                    const matchesKeyword = dataFilter["nameProducts"]?.toLowerCase().includes(valueForm.keyword.toLowerCase()) || "";
+                    return isNotExpired && matchesKeyword;
+                }
+                
+                return isNotExpired;
+            });
             setDataSource(dataDocAllProducts);
         } else {
             setDataSource(tempDataSource);
@@ -125,6 +144,10 @@ function ProductManagement() {
         {
             value: "expiredProduct",
             label: "Sản Phẩm Hết Hạn",
+        },
+        {
+            value: "productisExpired",
+            label: "Sản Phẩm Còn Hạn",
         },
     ];
     const columns = [
