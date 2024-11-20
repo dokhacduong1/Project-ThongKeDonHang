@@ -86,7 +86,7 @@ function ProductManagement() {
     };
     //Hàm này search dùng biến temDataSource để tìm cái này cho phép ta lấy dữ liệu lưu chữ tạm thời để tìm kiếm xong set vào DataSource Chính
     const handleForm = async (valueForm) => {
-        console.log(valueForm);
+      
         if (
             valueForm.select !== "all" &&
             valueForm.select !== "expiredProduct" &&
@@ -96,17 +96,17 @@ function ProductManagement() {
             
             // Convert both to lowercase and check
             const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
-                
-                return dataFilter[valueForm.select]?.toLowerCase().includes(valueForm.keyword.toLowerCase());
+
+                return dataFilter[valueForm.select]?.replace(/\s+/g, ' ')?.trim()?.toLowerCase().includes(valueForm.keyword?.replace(/\s+/g, ' ')?.trim()?.toLowerCase());
             });
         
             setDataSource(dataDocAllProducts);
         } else if (valueForm.select === "expiredProduct") {
             const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
-               
+                
                 const isExpired = new Date(dataFilter.cycleProducts) < new Date(getDataTime());
                 if(valueForm.keyword){
-                    const matchesKeyword = dataFilter["nameProducts"]?.toLowerCase().includes(valueForm.keyword?.toLowerCase()) || "";
+                    const matchesKeyword = dataFilter["nameProducts"]?.replace(/\s+/g, ' ')?.trim()?.toLowerCase().includes(valueForm.keyword?.replace(/\s+/g, ' ')?.trim()?.toLowerCase());
                     return isExpired && matchesKeyword;
                 }
                 
@@ -117,7 +117,7 @@ function ProductManagement() {
             const dataDocAllProducts = tempDataSource.filter((dataFilter) => {
                 const isNotExpired = new Date(dataFilter.cycleProducts) > new Date(getDataTime());
                 if(valueForm.keyword){
-                    const matchesKeyword = dataFilter["nameProducts"]?.toLowerCase().includes(valueForm.keyword.toLowerCase()) || "";
+                    const matchesKeyword = dataFilter["nameProducts"]?.replace(/\s+/g, ' ')?.trim()?.toLowerCase().includes(valueForm.keyword?.replace(/\s+/g, ' ')?.trim()?.toLowerCase());
                     return isNotExpired && matchesKeyword;
                 }
                 
